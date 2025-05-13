@@ -1,10 +1,19 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { BarChart, LineChart } from "recharts";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Area,
+} from "recharts";
 import {
   LineChart as LineChartIcon,
   BarChart as BarChartIcon,
@@ -262,16 +271,16 @@ const Dashboard: React.FC = () => {
                       </defs>
                       <XAxis dataKey="name" />
                       <YAxis />
-                      <LineChart.CartesianGrid strokeDasharray="3 3" />
-                      <LineChart.Tooltip />
-                      <LineChart.Line 
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <Tooltip />
+                      <Line 
                         type="monotone" 
                         dataKey="value" 
                         stroke="#1e3a8a" 
                         activeDot={{ r: 8 }}
                         strokeWidth={2}
                       />
-                      <LineChart.Area 
+                      <Area 
                         type="monotone" 
                         dataKey="value" 
                         stroke="none" 
@@ -287,11 +296,11 @@ const Dashboard: React.FC = () => {
                   </CardHeader>
                   <CardContent>
                     <BarChart width={300} height={300} data={allocationData}>
-                      <BarChart.CartesianGrid strokeDasharray="3 3" />
-                      <BarChart.XAxis dataKey="name" />
-                      <BarChart.YAxis />
-                      <BarChart.Tooltip />
-                      <BarChart.Bar dataKey="value" fill="#1e3a8a" />
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#1e3a8a" />
                     </BarChart>
                   </CardContent>
                 </Card>
