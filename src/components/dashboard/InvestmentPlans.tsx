@@ -20,8 +20,8 @@ const plans: InvestmentPlan[] = [
     id: "daily",
     name: "Daily Trader",
     duration: "24 hours",
-    returns: "0.8% - 1.2%",
-    minInvestment: 100,
+    returns: "29.7% - 31.4%",
+    minInvestment: 50,
     icon: <Clock className="h-8 w-8 text-primary" />,
     description: "Quick returns on short-term investments. Perfect for active traders."
   },
@@ -29,7 +29,7 @@ const plans: InvestmentPlan[] = [
     id: "weekly",
     name: "Weekly Growth",
     duration: "7 days",
-    returns: "3.5% - 5.2%",
+    returns: "35.5% - 42.2%",
     minInvestment: 500,
     icon: <Clock className="h-8 w-8 text-indigo-500" />,
     description: "Balanced risk-reward ratio with weekly returns on your investment."
@@ -38,7 +38,7 @@ const plans: InvestmentPlan[] = [
     id: "monthly",
     name: "Monthly Builder",
     duration: "30 days",
-    returns: "8% - 12%",
+    returns: "68% - 79%",
     minInvestment: 1000,
     icon: <Calendar className="h-8 w-8 text-emerald-500" />,
     description: "Steady growth with monthly compounding returns."
@@ -47,7 +47,7 @@ const plans: InvestmentPlan[] = [
     id: "quarterly",
     name: "Quarterly Accelerator",
     duration: "90 days",
-    returns: "18% - 25%",
+    returns: "112% - 135%",
     minInvestment: 2500,
     icon: <Calendar className="h-8 w-8 text-amber-500" />,
     description: "Accelerate your wealth with our medium-term investment plan."
@@ -56,7 +56,7 @@ const plans: InvestmentPlan[] = [
     id: "biannual",
     name: "6-Month Maximizer",
     duration: "180 days",
-    returns: "32% - 45%",
+    returns: "182% - 215%",
     minInvestment: 5000,
     icon: <TrendingUp className="h-8 w-8 text-rose-500" />,
     description: "Maximize your returns with our premium long-term investment strategy."

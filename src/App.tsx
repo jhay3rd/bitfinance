@@ -14,6 +14,9 @@ import News from "./pages/News";
 import Features from "./pages/Features";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import PlansPage from "./pages/dashboard/PlansPage";
+import SettingsPage from "./pages/dashboard/SettingsPage";
+import SupportPage from "./pages/dashboard/SupportPage";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +32,9 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/invest/:planId" element={<InvestmentPlan />} />
+          <Route path="/dashboard/plans" element={<PlansPage />} />
+          <Route path="/dashboard/settings" element={<SettingsPage />} />
+          <Route path="/dashboard/support" element={<SupportPage />} />
           <Route path="/markets" element={<Markets />} />
           <Route path="/news" element={<News />} />
           <Route path="/features" element={<Features />} />
