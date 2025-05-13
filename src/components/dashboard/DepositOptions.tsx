@@ -1,10 +1,9 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CreditCard, Wallet, Bank, RefreshCw } from "lucide-react";
+import { CreditCard, Wallet, Building, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -62,7 +61,7 @@ const DepositOptions: React.FC = () => {
                 <CreditCard className="mr-2 h-4 w-4" /> Credit Card
               </TabsTrigger>
               <TabsTrigger value="bank" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Bank className="mr-2 h-4 w-4" /> Bank Transfer
+                <Building className="mr-2 h-4 w-4" /> Bank Transfer
               </TabsTrigger>
             </TabsList>
             

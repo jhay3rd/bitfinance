@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Wallet, Bank, RefreshCw, AlertTriangle } from "lucide-react";
+import { Wallet, Building, RefreshCw, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -72,7 +72,7 @@ const WithdrawOptions: React.FC = () => {
                 <Wallet className="mr-2 h-4 w-4" /> Cryptocurrency
               </TabsTrigger>
               <TabsTrigger value="bank" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Bank className="mr-2 h-4 w-4" /> Bank Account
+                <Building className="mr-2 h-4 w-4" /> Bank Account
               </TabsTrigger>
             </TabsList>
             
