@@ -21,19 +21,25 @@ const Overview: React.FC<OverviewProps> = ({
   allocationData,
 }) => {
   return (
-    <TabsContent value="overview" className="space-y-6">
+    <div className="space-y-6 animate-in fade-in-50 duration-300">
       <SummaryCards 
         totalPortfolioValue={totalPortfolioValue} 
         totalAssets={portfolioAssets.length}
       />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <PerformanceChart data={monthlyPerformanceData} />
-        <AllocationChart data={allocationData} />
+      <div className="grid gap-4 md:grid-cols-7">
+        <div className="md:col-span-5 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+          <PerformanceChart data={monthlyPerformanceData} />
+        </div>
+        <div className="md:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+          <AllocationChart data={allocationData} />
+        </div>
       </div>
 
-      <PortfolioAssets assets={portfolioAssets} />
-    </TabsContent>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+        <PortfolioAssets assets={portfolioAssets} />
+      </div>
+    </div>
   );
 };
 
