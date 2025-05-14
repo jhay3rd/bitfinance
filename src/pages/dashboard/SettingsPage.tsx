@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Bell, LockKeyhole, Shield, UserCog, Wallet } from "lucide-react";
+import { ArrowLeft, Bell, CreditCard, LockKeyhole, Shield, UserCog, Wallet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/dashboard/Header";
 
