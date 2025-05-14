@@ -14,6 +14,11 @@ import News from "./pages/News";
 import Features from "./pages/Features";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import AboutUs from "./pages/AboutUs";
+import Careers from "./pages/Careers";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Cookies from "./pages/Cookies";
 import PlansPage from "./pages/dashboard/PlansPage";
 import SettingsPage from "./pages/dashboard/SettingsPage";
 import SupportPage from "./pages/dashboard/SupportPage";
@@ -39,6 +44,11 @@ const App = () => (
           <Route path="/news" element={<News />} />
           <Route path="/features" element={<Features />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/career" element={<Careers />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/cookies" element={<Cookies />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

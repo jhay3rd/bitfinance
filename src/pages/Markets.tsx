@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatBubble from "@/components/ChatBubble";
@@ -21,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, TrendingDown, Search } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface CryptoData {
   id: number;
@@ -36,6 +38,8 @@ interface CryptoData {
 }
 
 const Markets: React.FC = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{
     key: keyof CryptoData;
@@ -173,6 +177,14 @@ const Markets: React.FC = () => {
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  const handleTrade = (cryptoName: string) => {
+    toast({
+      title: `Buy ${cryptoName}`,
+      description: "Redirecting to deposit page to fund your account",
+    });
+    navigate("/dashboard/deposit");
+  };
 
   const requestSort = (key: keyof CryptoData) => {
     let direction: "ascending" | "descending" = "ascending";
@@ -407,6 +419,7 @@ const Markets: React.FC = () => {
                               variant="outline"
                               size="sm"
                               className="text-xs"
+                              onClick={() => handleTrade(crypto.name)}
                             >
                               Trade
                             </Button>
