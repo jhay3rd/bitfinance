@@ -10,6 +10,7 @@ import InvestmentPlans from "@/components/dashboard/InvestmentPlans";
 import DepositOptions from "@/components/dashboard/DepositOptions";
 import WithdrawOptions from "@/components/dashboard/WithdrawOptions";
 import ProfileSection from "@/components/dashboard/ProfileSection";
+import { useLocation } from "react-router-dom";
 import {
   portfolioAssets,
   monthlyPerformanceData,
@@ -32,8 +33,18 @@ import {
 } from "recharts";
 
 const Dashboard: React.FC = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("overview");
   const [isMounted, setIsMounted] = useState(false);
+  
+  // Get activeTab from location state if available (for redirects)
+  useEffect(() => {
+    if (location.state && location.state.activeTab) {
+      setActiveTab(location.state.activeTab);
+      // Clear the state to avoid persisting the tab selection on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
   
   // Calculate derived data
   const totalPortfolioValue = getTotalPortfolioValue(portfolioAssets);

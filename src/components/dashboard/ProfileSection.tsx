@@ -1,16 +1,40 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { User, Shield, Bell, CreditCard, Key } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User, Shield, Bell, CreditCard, Key, Calendar, MapPin, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const ProfileSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState("personal");
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Mock user data
+  const [user, setUser] = useState({
+    name: "John Doe",
+    email: "john.doe@example.com",
+    phone: "+1 (555) 123-4567",
+    country: "United States",
+    twoFactorEnabled: true,
+    notificationsEnabled: true,
+    joinDate: "January 15, 2023",
+    username: "johndoe123",
+    dateOfBirth: "1990-06-15",
+    address: "123 Main St, Apt 4B, San Francisco, CA 94103",
+    gender: "male",
+    profileImage: "",
+  });
   
   const handleSave = () => {
     toast({
@@ -19,28 +43,56 @@ const ProfileSection: React.FC = () => {
     });
   };
   
-  // Mock user data
-  const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    country: "United States",
-    twoFactorEnabled: true,
-    notificationsEnabled: true,
-    joinDate: "January 15, 2023"
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // In a real app, you would upload the file to a server
+      // Here we're just using a local URL for demonstration
+      const imageUrl = URL.createObjectURL(file);
+      setUser({...user, profileImage: imageUrl});
+      
+      toast({
+        title: "Profile picture uploaded",
+        description: "Your new profile picture has been set.",
+      });
+    }
+  };
+  
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
   
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold">Your Profile</h2>
           <p className="text-muted-foreground">Manage your account settings and preferences</p>
         </div>
-        <div className="flex items-center space-x-4">
-          <Avatar className="h-12 w-12 border-2 border-primary">
-            <AvatarFallback className="bg-primary text-white text-xl">JD</AvatarFallback>
-          </Avatar>
+        <div className="flex flex-col items-center space-y-2">
+          <div className="relative group">
+            <Avatar className="h-24 w-24 border-2 border-primary cursor-pointer" onClick={triggerFileInput}>
+              {user.profileImage ? (
+                <AvatarImage src={user.profileImage} alt={user.name} className="object-cover" />
+              ) : (
+                <AvatarFallback className="bg-primary text-white text-xl">{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+              )}
+            </Avatar>
+            <div 
+              className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+              onClick={triggerFileInput}
+            >
+              <Upload className="h-8 w-8 text-white" />
+            </div>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              className="hidden" 
+              accept="image/*"
+              onChange={handleFileUpload}
+            />
+          </div>
+          <p className="text-sm text-muted-foreground">Click to upload a new photo</p>
         </div>
       </div>
       
@@ -64,23 +116,103 @@ const ProfileSection: React.FC = () => {
           </Tabs>
         </CardHeader>
         <CardContent>
-          <TabsContent value="personal" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Full Name</label>
-                <Input defaultValue={user.name} className="w-full" />
+          <TabsContent value="personal" className="space-y-6">
+            <div>
+              <h3 className="text-lg font-medium mb-4">Basic Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Full Name</label>
+                  <Input 
+                    value={user.name}
+                    onChange={(e) => setUser({...user, name: e.target.value})}
+                    className="w-full"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Username</label>
+                  <Input 
+                    value={user.username}
+                    onChange={(e) => setUser({...user, username: e.target.value})}
+                    className="w-full"
+                    placeholder="Choose a unique username"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Email Address</label>
+                  <Input 
+                    value={user.email}
+                    className="w-full"
+                    readOnly
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Phone Number</label>
+                  <Input 
+                    value={user.phone}
+                    onChange={(e) => setUser({...user, phone: e.target.value})}
+                    className="w-full"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Date of Birth</label>
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <Input 
+                      type="date"
+                      value={user.dateOfBirth}
+                      onChange={(e) => setUser({...user, dateOfBirth: e.target.value})}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Gender</label>
+                  <Select 
+                    value={user.gender} 
+                    onValueChange={(value) => setUser({...user, gender: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                      <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Email Address</label>
-                <Input defaultValue={user.email} className="w-full" readOnly />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Phone Number</label>
-                <Input defaultValue={user.phone} className="w-full" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Country</label>
-                <Input defaultValue={user.country} className="w-full" />
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium mb-4">Address Information</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Address</label>
+                  <div className="flex items-center">
+                    <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <Input 
+                      value={user.address} 
+                      onChange={(e) => setUser({...user, address: e.target.value})}
+                      className="w-full"
+                      placeholder="Enter your full address"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Country</label>
+                    <Input 
+                      value={user.country}
+                      onChange={(e) => setUser({...user, country: e.target.value})}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -22,6 +22,7 @@ import Cookies from "./pages/Cookies";
 import PlansPage from "./pages/dashboard/PlansPage";
 import SettingsPage from "./pages/dashboard/SettingsPage";
 import SupportPage from "./pages/dashboard/SupportPage";
+import DepositRedirect from "./pages/dashboard/DepositRedirect";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/dashboard/plans" element={<PlansPage />} />
           <Route path="/dashboard/settings" element={<SettingsPage />} />
           <Route path="/dashboard/support" element={<SupportPage />} />
+          <Route path="/dashboard/deposit" element={<DepositRedirect />} />
           <Route path="/markets" element={<Markets />} />
           <Route path="/news" element={<News />} />
           <Route path="/features" element={<Features />} />
