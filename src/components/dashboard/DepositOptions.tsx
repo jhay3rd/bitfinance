@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,13 +17,12 @@ import BankDepositOption from "./deposit/BankDepositOption";
 const DepositOptions: React.FC = () => {
   const [activeMethod, setActiveMethod] = useState("crypto");
   const [amount, setAmount] = useState("");
+  const [selectedCrypto, setSelectedCrypto] = useState("btc");
   const { toast } = useToast();
   const navigate = useNavigate();
   
   const handleDeposit = (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const selectedCrypto = formData.get("selectedCrypto") as string || "btc";
     
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
       toast({
@@ -98,7 +98,7 @@ const DepositOptions: React.FC = () => {
                 </div>
                 
                 <TabsContent value="crypto" className="mt-0 border rounded-lg p-4">
-                  <CryptoDepositOption />
+                  <CryptoDepositOption setSelectedCrypto={setSelectedCrypto} />
                 </TabsContent>
                 
                 <TabsContent value="card" className="mt-0 border rounded-lg p-4">

@@ -24,6 +24,7 @@ import SettingsPage from "./pages/dashboard/SettingsPage";
 import SupportPage from "./pages/dashboard/SupportPage";
 import DepositRedirect from "./pages/dashboard/DepositRedirect";
 import DepositConfirm from "./pages/dashboard/DepositConfirm";
+import WithdrawConfirm from "./pages/dashboard/WithdrawConfirm";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/dashboard/support" element={<SupportPage />} />
           <Route path="/dashboard/deposit" element={<DepositRedirect />} />
           <Route path="/dashboard/deposit/confirm" element={<DepositConfirm />} />
+          <Route path="/dashboard/withdraw/confirm" element={<WithdrawConfirm />} />
           <Route path="/markets" element={<Markets />} />
           <Route path="/news" element={<News />} />
           <Route path="/features" element={<Features />} />

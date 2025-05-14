@@ -17,18 +17,42 @@ const WithdrawOptions: React.FC = () => {
   const [activeMethod, setActiveMethod] = useState("crypto");
   const [amount, setAmount] = useState("");
   const [withdrawalAddress, setWithdrawalAddress] = useState("");
-  const [selectedCrypto, setSelectedCrypto] = useState("");
+  const [selectedCrypto, setSelectedCrypto] = useState("btc");
   const [selectedNetwork, setSelectedNetwork] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
   
+  // User's available balance (in a real app, this would come from an API)
+  const availableBalance = 24125.50;
+  
   const handleWithdraw = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+    const amountValue = Number(amount);
+    
+    if (!amount || isNaN(amountValue) || amountValue <= 0) {
       toast({
         title: "Invalid amount",
         description: "Please enter a valid withdrawal amount",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Check if withdrawal amount exceeds available balance
+    if (amountValue > availableBalance) {
+      toast({
+        title: "Insufficient funds",
+        description: `Your withdrawal amount exceeds your available balance of $${availableBalance.toFixed(2)}`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (amountValue < 50) {
+      toast({
+        title: "Minimum withdrawal amount",
+        description: "The minimum withdrawal amount is $50.00",
         variant: "destructive",
       });
       return;
@@ -44,12 +68,12 @@ const WithdrawOptions: React.FC = () => {
     }
     
     toast({
-      title: "Withdrawal request submitted",
+      title: "Processing withdrawal request",
       description: `Your withdrawal of $${amount} via ${activeMethod} is being processed.`,
     });
     
-    // In a real app, you'd navigate to a confirmation page or show a success message
-    navigate("/dashboard/withdraw/confirm");
+    // Navigate to the withdrawal confirmation page
+    navigate(`/dashboard/withdraw/confirm?method=${activeMethod}&amount=${amount}&crypto=${selectedCrypto}`);
   };
   
   return (
@@ -98,7 +122,7 @@ const WithdrawOptions: React.FC = () => {
                     className="w-full"
                     min="50"
                   />
-                  <p className="text-xs text-muted-foreground mt-1">Available balance: $24,125.50</p>
+                  <p className="text-xs text-muted-foreground mt-1">Available balance: ${availableBalance.toFixed(2)}</p>
                 </div>
                 
                 <TabsContent value="crypto" className="mt-0 space-y-4">

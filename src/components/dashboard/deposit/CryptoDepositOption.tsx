@@ -9,8 +9,12 @@ interface CryptoOption {
   value: string;
 }
 
-const CryptoDepositOption: React.FC = () => {
-  const [selectedCrypto, setSelectedCrypto] = useState("btc");
+interface CryptoDepositOptionProps {
+  setSelectedCrypto?: (crypto: string) => void;
+}
+
+const CryptoDepositOption: React.FC<CryptoDepositOptionProps> = ({ setSelectedCrypto }) => {
+  const [selectedValue, setSelectedValue] = useState("btc");
   
   const cryptoOptions: CryptoOption[] = [
     {
@@ -37,7 +41,11 @@ const CryptoDepositOption: React.FC = () => {
   ];
 
   const handleCryptoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedCrypto(e.target.value);
+    const value = e.target.value;
+    setSelectedValue(value);
+    if (setSelectedCrypto) {
+      setSelectedCrypto(value);
+    }
   };
 
   return (
@@ -53,15 +61,15 @@ const CryptoDepositOption: React.FC = () => {
           </div>
           <input 
             type="radio" 
-            name="crypto" 
+            name="selectedCrypto" 
             value={crypto.value} 
-            checked={selectedCrypto === crypto.value}
+            checked={selectedValue === crypto.value}
             onChange={handleCryptoChange}
             className="h-4 w-4" 
           />
         </div>
       ))}
-      <input type="hidden" name="selectedCrypto" value={selectedCrypto} />
+      <input type="hidden" name="selectedCrypto" value={selectedValue} />
     </div>
   );
 };
