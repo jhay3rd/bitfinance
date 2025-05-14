@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,6 +21,8 @@ const DepositOptions: React.FC = () => {
   
   const handleDeposit = (e: React.FormEvent) => {
     e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const selectedCrypto = formData.get("selectedCrypto") as string || "btc";
     
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
       toast({
@@ -46,8 +47,8 @@ const DepositOptions: React.FC = () => {
       description: `Your deposit of $${amount} using ${activeMethod} has been initiated.`,
     });
     
-    // In a real app, you'd navigate to a payment processing page or show instructions
-    navigate(`/dashboard/deposit/confirm?method=${activeMethod}&amount=${amount}`);
+    // Navigate to the deposit confirmation page with the selected method, amount, and crypto type
+    navigate(`/dashboard/deposit/confirm?method=${activeMethod}&amount=${amount}&crypto=${selectedCrypto}`);
   };
   
   return (
