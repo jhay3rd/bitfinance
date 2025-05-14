@@ -1,9 +1,11 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.svg";
 
 const Footer: React.FC = () => {
+  const location = useLocation();
+  
   // Function to scroll to top when link is clicked
   const scrollToTop = () => {
     window.scrollTo({

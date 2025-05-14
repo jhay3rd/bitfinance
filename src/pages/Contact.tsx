@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -17,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatBubble from "@/components/ChatBubble";
+import PartnerLogos from "@/components/PartnerLogos";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 
 const Contact: React.FC = () => {
@@ -27,6 +27,14 @@ const Contact: React.FC = () => {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -202,7 +210,7 @@ const Contact: React.FC = () => {
                     <div>
                       <h3 className="font-semibold">BitFinance Headquarters</h3>
                       <p className="text-gray-600 dark:text-gray-400">
-                        123 Blockchain Avenue, Suite 400
+                        123 Financial District, Suite 400
                         <br />
                         San Francisco, CA 94107
                         <br />
@@ -280,6 +288,7 @@ const Contact: React.FC = () => {
         </div>
       </div>
 
+      <PartnerLogos />
       <Footer />
       <ChatBubble />
     </div>
