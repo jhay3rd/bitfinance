@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Menu, X } from "lucide-react";
@@ -10,10 +10,19 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useIsMobile();
+  const location = useLocation();
   
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  // Scroll to top when route changes
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }, [location.pathname]);
 
   return (
     <nav className="sticky top-0 z-50 w-full backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
