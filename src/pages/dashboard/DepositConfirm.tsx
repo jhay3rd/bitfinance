@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,6 +53,12 @@ const DepositConfirm: React.FC = () => {
   // Make sure we're using the correct crypto based on the URL parameter
   const selectedCrypto = cryptoAddresses[cryptoType] || cryptoAddresses.btc;
   
+  // Effect to log parameters for debugging
+  useEffect(() => {
+    console.log("Deposit parameters:", { method, amount, cryptoType });
+    console.log("Selected crypto:", selectedCrypto);
+  }, [method, amount, cryptoType, selectedCrypto]);
+  
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -86,9 +92,26 @@ const DepositConfirm: React.FC = () => {
       return;
     }
     
+    // Save the deposit information to localStorage for transaction history
+    const depositTransaction = {
+      id: `DEP${Date.now()}`,
+      type: "deposit",
+      method: selectedCrypto.name,
+      amount: amount,
+      currency: "USD",
+      status: "pending",
+      date: new Date().toISOString(),
+      details: `${selectedCrypto.symbol} deposit - Confirmation pending`
+    };
+    
+    const existingTransactions = localStorage.getItem('transactions');
+    const transactions = existingTransactions ? JSON.parse(existingTransactions) : [];
+    transactions.unshift(depositTransaction);
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+    
     toast({
       title: "Deposit submitted",
-      description: `Your ${selectedCrypto.name} deposit is being verified. Your balance will be updated shortly.`,
+      description: `Your ${selectedCrypto.name} deposit of $${amount} is being verified. Your balance will be updated shortly.`,
     });
     
     navigate("/dashboard", { state: { activeTab: "overview" } });
