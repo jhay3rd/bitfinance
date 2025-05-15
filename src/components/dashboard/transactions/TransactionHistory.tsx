@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,7 +18,7 @@ interface Transaction {
   status: 'approved' | 'pending' | 'reviewing' | 'rejected' | 'completed';
 }
 
-const transactions: Transaction[] = [
+const defaultTransactions: Transaction[] = [
   {
     id: "tx1",
     type: "deposit",
@@ -72,21 +72,37 @@ const transactions: Transaction[] = [
 const getStatusBadgeClasses = (status: string) => {
   switch (status) {
     case 'approved':
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
     case 'pending':
-      return 'bg-amber-100 text-amber-800';
+      return 'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400';
     case 'reviewing':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
     case 'rejected':
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
     case 'completed':
-      return 'bg-purple-100 text-purple-800';
+      return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
   }
 };
 
 const TransactionHistory: React.FC = () => {
+  const [transactions, setTransactions] = useState<Transaction[]>(defaultTransactions);
+
+  // Load transactions from localStorage on component mount
+  useEffect(() => {
+    const storedTransactions = localStorage.getItem('transactions');
+    if (storedTransactions) {
+      try {
+        const parsedTransactions = JSON.parse(storedTransactions) as Transaction[];
+        // Combine with default transactions, but prioritize stored ones
+        setTransactions([...parsedTransactions, ...defaultTransactions].slice(0, 10));
+      } catch (error) {
+        console.error('Error parsing stored transactions:', error);
+      }
+    }
+  }, []);
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
       <h3 className="text-xl font-semibold mb-4">Recent Transactions</h3>
@@ -102,19 +118,27 @@ const TransactionHistory: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.map(transaction => (
-              <TableRow key={transaction.id}>
-                <TableCell className="capitalize">{transaction.type}</TableCell>
-                <TableCell>{transaction.amount}</TableCell>
-                <TableCell>{transaction.asset}</TableCell>
-                <TableCell>{transaction.date}</TableCell>
-                <TableCell>
-                  <span className={`px-2 py-1 ${getStatusBadgeClasses(transaction.status)} rounded-full text-xs font-medium`}>
-                    {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                  </span>
+            {transactions.length > 0 ? (
+              transactions.map(transaction => (
+                <TableRow key={transaction.id}>
+                  <TableCell className="capitalize">{transaction.type}</TableCell>
+                  <TableCell>{transaction.amount}</TableCell>
+                  <TableCell>{transaction.asset}</TableCell>
+                  <TableCell>{transaction.date}</TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 ${getStatusBadgeClasses(transaction.status)} rounded-full text-xs font-medium`}>
+                      {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
+                  No transactions found
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>

@@ -30,6 +30,7 @@ const DepositConfirm: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   
+  // Updated crypto addresses for different cryptocurrencies
   const cryptoAddresses: Record<string, CryptoAddress> = {
     btc: {
       name: "Bitcoin",
@@ -49,6 +50,7 @@ const DepositConfirm: React.FC = () => {
     }
   };
   
+  // Make sure we're using the correct crypto based on the URL parameter
   const selectedCrypto = cryptoAddresses[cryptoType] || cryptoAddresses.btc;
   
   const copyToClipboard = (text: string) => {
@@ -86,7 +88,7 @@ const DepositConfirm: React.FC = () => {
     
     toast({
       title: "Deposit submitted",
-      description: "Your deposit is being verified. Your balance will be updated shortly.",
+      description: `Your ${selectedCrypto.name} deposit is being verified. Your balance will be updated shortly.`,
     });
     
     navigate("/dashboard", { state: { activeTab: "overview" } });
