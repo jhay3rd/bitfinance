@@ -111,7 +111,7 @@ const DepositConfirm: React.FC = () => {
               Deposit {selectedCrypto.name}
             </CardTitle>
             <CardDescription>
-              Please send {amount} USD worth of {selectedCrypto.name} to the address below
+              Please send ${amount} USD worth of {selectedCrypto.name} to the address below
             </CardDescription>
           </CardHeader>
           
