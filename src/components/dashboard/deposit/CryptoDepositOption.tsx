@@ -69,7 +69,6 @@ const CryptoDepositOption: React.FC<CryptoDepositOptionProps> = ({ setSelectedCr
           />
         </div>
       ))}
-      <input type="hidden" name="selectedCrypto" value={selectedValue} />
     </div>
   );
 };
