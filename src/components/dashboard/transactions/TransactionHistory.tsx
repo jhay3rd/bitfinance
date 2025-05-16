@@ -8,6 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { userDataService } from "@/services/userDataService";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 interface Transaction {
   id: string;
@@ -18,6 +22,7 @@ interface Transaction {
   status: 'approved' | 'pending' | 'reviewing' | 'rejected' | 'completed';
 }
 
+// Default transactions as fallback
 const defaultTransactions: Transaction[] = [
   {
     id: "tx1",
@@ -34,38 +39,6 @@ const defaultTransactions: Transaction[] = [
     asset: "ETH",
     date: "May 5, 2023",
     status: "pending"
-  },
-  {
-    id: "tx3",
-    type: "withdraw",
-    amount: "$250.00",
-    asset: "USDT",
-    date: "Apr 28, 2023",
-    status: "reviewing"
-  },
-  {
-    id: "tx4",
-    type: "deposit",
-    amount: "$2,000.00",
-    asset: "BTC",
-    date: "Apr 15, 2023",
-    status: "approved"
-  },
-  {
-    id: "tx5",
-    type: "withdraw",
-    amount: "$750.00",
-    asset: "ETH",
-    date: "Apr 5, 2023",
-    status: "rejected"
-  },
-  {
-    id: "tx6",
-    type: "investment",
-    amount: "$3,000.00",
-    asset: "Monthly Plan",
-    date: "Mar 20, 2023",
-    status: "completed"
   }
 ];
 
@@ -89,43 +62,26 @@ const getStatusBadgeClasses = (status: string) => {
 const TransactionHistory: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  // Load and merge transactions from localStorage on component mount
+  // Load and merge transactions from user data service on component mount
   useEffect(() => {
     const loadTransactions = () => {
-      const storedTransactions = localStorage.getItem('transactions');
-      let userTransactions: Transaction[] = [];
+      // Get user-specific transactions
+      const userTransactions = userDataService.getTransactions();
       
-      if (storedTransactions) {
-        try {
-          userTransactions = JSON.parse(storedTransactions) as Transaction[];
-          // Ensure transaction dates are properly formatted for sorting
-          userTransactions = userTransactions.map(tx => ({
-            ...tx,
-            // Convert date to sortable format if necessary
-            date: tx.date 
-          }));
-        } catch (error) {
-          console.error('Error parsing stored transactions:', error);
-        }
-      }
-      
-      // Combine user transactions with default transactions
-      const allTransactions = [
-        ...userTransactions, 
-        ...defaultTransactions.filter(dt => 
-          !userTransactions.some(ut => ut.id === dt.id)
-        )
-      ];
+      // If user has no transactions yet but they're logged in, show default transactions
+      const transactionsToShow = userTransactions.length > 0 
+        ? userTransactions 
+        : defaultTransactions;
       
       // Sort by date (most recent first)
-      const sortedTransactions = [...allTransactions].sort((a, b) => {
+      const sortedTransactions = [...transactionsToShow].sort((a, b) => {
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
         return dateB.getTime() - dateA.getTime();
       });
       
-      // Limit to 10 transactions for display
-      setTransactions(sortedTransactions.slice(0, 10));
+      // Limit to 5 transactions for display
+      setTransactions(sortedTransactions.slice(0, 5));
     };
 
     // Add event listener for storage changes
@@ -134,18 +90,22 @@ const TransactionHistory: React.FC = () => {
     // Initial load
     loadTransactions();
     
-    // Periodic check for new transactions (every 5 seconds)
-    const intervalId = setInterval(loadTransactions, 5000);
-    
     return () => {
       window.removeEventListener('storage', loadTransactions);
-      clearInterval(intervalId);
     };
   }, []);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-      <h3 className="text-xl font-semibold mb-4">Recent Transactions</h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-semibold">Recent Transactions</h3>
+        <Button variant="ghost" size="sm" asChild>
+          <Link to="/dashboard/transactions">
+            View All <ArrowRight className="ml-1 h-4 w-4" />
+          </Link>
+        </Button>
+      </div>
+      
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>

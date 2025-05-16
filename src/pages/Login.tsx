@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,38 +13,49 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatBubble from "@/components/ChatBubble";
 import SocialSignIn from "@/components/auth/SocialSignIn";
+import useAuth from "@/hooks/useAuth";
+
+interface LocationState {
+  from?: {
+    pathname: string;
+  };
+}
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const location = useLocation();
+  const { isAuthenticated, login, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const locationState = location.state as LocationState | null;
+  const from = locationState?.from?.pathname || "/dashboard";
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, from]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
-    // This would be replaced with actual authentication logic
-    setTimeout(() => {
-      setIsLoading(false);
-      // Simulate successful login
-      toast({
-        title: "Login successful",
-        description: "Welcome back to BitFinance!",
-      });
-      navigate("/dashboard");
-    }, 1500);
+    // Call login from auth context
+    const success = await login(email, password);
+    
+    if (success) {
+      navigate(from, { replace: true });
+    }
   };
 
   const handleSocialSuccess = () => {
-    navigate("/dashboard");
+    navigate(from);
   };
 
   return (
@@ -62,7 +73,7 @@ const Login: React.FC = () => {
             </CardHeader>
             <CardContent className="grid gap-4">
               <SocialSignIn 
-                setIsLoading={setIsLoading} 
+                setIsLoading={() => {}} 
                 onSuccess={handleSocialSuccess} 
               />
               

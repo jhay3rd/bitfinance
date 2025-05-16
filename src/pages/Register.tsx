@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,54 +13,61 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatBubble from "@/components/ChatBubble";
+import useAuth from "@/hooks/useAuth";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { register, isAuthenticated, isLoading } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard/welcome");
+    }
+  }, [isAuthenticated, navigate]);
+
+  const validatePassword = () => {
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords don't match");
+      return false;
+    }
+    
+    if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      return false;
+    }
+    
+    setPasswordError("");
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (password !== confirmPassword) {
-      toast({
-        title: "Passwords don't match",
-        description: "Please make sure your passwords match.",
-        variant: "destructive",
-      });
+    if (!validatePassword()) {
       return;
     }
     
     if (!agreeToTerms) {
-      toast({
-        title: "Terms and conditions required",
-        description: "You must agree to the terms and conditions to continue.",
-        variant: "destructive",
-      });
+      setPasswordError("You must agree to terms and conditions");
       return;
     }
     
-    setIsLoading(true);
+    // Call register from auth context
+    const success = await register(fullName, email, password);
     
-    // This would be replaced with actual registration logic
-    setTimeout(() => {
-      setIsLoading(false);
-      // Simulate successful registration
-      toast({
-        title: "Registration successful",
-        description: "Welcome to BitFinance! Your account has been created.",
-      });
-      navigate("/dashboard");
-    }, 1500);
+    if (success) {
+      navigate("/dashboard/welcome");
+    }
   };
 
   return (
@@ -78,7 +85,7 @@ const Register: React.FC = () => {
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" onClick={() => navigate('/login')}>
                   <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
                     {/* Google logo */}
                     <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
@@ -88,7 +95,7 @@ const Register: React.FC = () => {
                   </svg>
                   Google
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" onClick={() => navigate('/login')}>
                   <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                     {/* Apple logo */}
                     <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.066 1.013 1.458 2.208 3.095 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09z"/>
@@ -136,7 +143,10 @@ const Register: React.FC = () => {
                       type="password"
                       placeholder="••••••••"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (confirmPassword) validatePassword();
+                      }}
                       required
                     />
                   </div>
@@ -147,9 +157,15 @@ const Register: React.FC = () => {
                       type="password"
                       placeholder="••••••••"
                       value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      onChange={(e) => {
+                        setConfirmPassword(e.target.value);
+                        if (password) validatePassword();
+                      }}
                       required
                     />
+                    {passwordError && (
+                      <p className="text-sm text-red-600 dark:text-red-400">{passwordError}</p>
+                    )}
                   </div>
                   <div className="flex items-center space-x-2 mt-1">
                     <Checkbox

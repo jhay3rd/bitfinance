@@ -23,6 +23,7 @@ import Header from "@/components/dashboard/Header";
 import Sidebar from "@/components/dashboard/Sidebar";
 import MobileNavigation from "@/components/dashboard/MobileNavigation";
 import ChatBubble from "@/components/ChatBubble";
+import { userDataService } from "@/services/userDataService";
 
 interface Transaction {
   id: string;
@@ -33,6 +34,7 @@ interface Transaction {
   status: 'approved' | 'pending' | 'reviewing' | 'rejected' | 'completed';
 }
 
+// Default transactions as fallback
 const defaultTransactions: Transaction[] = [
   {
     id: "tx1",
@@ -114,27 +116,16 @@ const TransactionsPage: React.FC = () => {
     setIsMounted(true);
     
     const loadTransactions = () => {
-      const storedTransactions = localStorage.getItem('transactions');
-      let userTransactions: Transaction[] = [];
+      // Get user transactions from service
+      let userTransactions = userDataService.getTransactions();
       
-      if (storedTransactions) {
-        try {
-          userTransactions = JSON.parse(storedTransactions) as Transaction[];
-        } catch (error) {
-          console.error('Error parsing stored transactions:', error);
-        }
+      // If user has no transactions, use defaults as fallback
+      if (userTransactions.length === 0) {
+        userTransactions = defaultTransactions;
       }
       
-      // Combine with default transactions
-      const allTransactions = [
-        ...userTransactions,
-        ...defaultTransactions.filter(dt => 
-          !userTransactions.some(ut => ut.id === dt.id)
-        )
-      ];
-      
       // Sort by date (most recent first)
-      const sortedTransactions = [...allTransactions].sort((a, b) => {
+      const sortedTransactions = [...userTransactions].sort((a, b) => {
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
         return dateB.getTime() - dateA.getTime();

@@ -12,21 +12,24 @@ import WithdrawOptions from "@/components/dashboard/WithdrawOptions";
 import ProfileSection from "@/components/dashboard/ProfileSection";
 import { useLocation } from "react-router-dom";
 import {
-  portfolioAssets,
-  monthlyPerformanceData,
   getTotalPortfolioValue,
   getAllocationData
 } from "@/models/dashboard";
+import useAuth from "@/hooks/useAuth";
+import { userDataService } from "@/services/userDataService";
 
-// Import our new components
+// Import our components
 import PortfolioView from "@/components/dashboard/portfolio/PortfolioView";
 import TransactionHistory from "@/components/dashboard/transactions/TransactionHistory";
 import BalanceCard from "@/components/dashboard/BalanceCard";
+import EmptyDashboardState from "@/components/dashboard/EmptyDashboardState";
 
 const Dashboard: React.FC = () => {
   const location = useLocation();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [isMounted, setIsMounted] = useState(false);
+  const [userPortfolio, setUserPortfolio] = useState<any>(null);
   
   // Get activeTab from location state if available (for redirects)
   useEffect(() => {
@@ -37,14 +40,41 @@ const Dashboard: React.FC = () => {
     }
   }, [location.state]);
   
+  // Load user's portfolio
+  useEffect(() => {
+    if (user) {
+      const portfolio = userDataService.getPortfolio();
+      setUserPortfolio(portfolio);
+    }
+  }, [user]);
+  
   // Calculate derived data
-  const totalPortfolioValue = getTotalPortfolioValue(portfolioAssets);
-  const allocationData = getAllocationData(portfolioAssets);
+  const portfolioAssets = userPortfolio?.assets || [];
+  const totalPortfolioValue = userPortfolio?.totalValue || 0;
+  
+  // Generate monthly performance data based on user data or default if empty
+  const monthlyPerformanceData = userPortfolio?.performanceData || [
+    { name: 'Jan', value: 0 },
+    { name: 'Feb', value: 0 },
+    { name: 'Mar', value: 0 },
+    { name: 'Apr', value: 0 },
+    { name: 'May', value: 0 },
+    { name: 'Jun', value: 0 }
+  ];
+  
+  const allocationData = portfolioAssets.length > 0 
+    ? getAllocationData(portfolioAssets)
+    : [
+        { name: "No Assets", value: 100, fill: "#ccc" }
+      ];
 
   // Animation helper
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Check if this is a new portfolio with no assets
+  const isEmptyPortfolio = portfolioAssets.length === 0;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -106,20 +136,29 @@ const Dashboard: React.FC = () => {
               className="space-y-6 animate-in fade-in slide-in-from-left-8 duration-500"
             >
               <BalanceCard 
-                balance="$51,090.22" 
+                balance={`$${totalPortfolioValue.toFixed(2)}`} 
                 change={{
-                  value: "$1,250.45",
-                  percentage: "2.5%",
+                  value: "$0.00",
+                  percentage: "0%",
                   isPositive: true
                 }}
               />
               
-              <Overview 
-                portfolioAssets={portfolioAssets}
-                totalPortfolioValue={totalPortfolioValue}
-                monthlyPerformanceData={monthlyPerformanceData}
-                allocationData={allocationData}
-              />
+              {isEmptyPortfolio ? (
+                <EmptyDashboardState 
+                  title="Welcome to Your Dashboard"
+                  description="Your portfolio is empty. Get started by making your first deposit."
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                />
+              ) : (
+                <Overview 
+                  portfolioAssets={portfolioAssets}
+                  totalPortfolioValue={totalPortfolioValue}
+                  monthlyPerformanceData={monthlyPerformanceData}
+                  allocationData={allocationData}
+                />
+              )}
               
               {/* Add Investment Plans to Overview */}
               <InvestmentPlans />
@@ -132,10 +171,19 @@ const Dashboard: React.FC = () => {
               value="portfolio" 
               className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-500"
             >
-              <PortfolioView 
-                monthlyPerformanceData={monthlyPerformanceData}
-                allocationData={allocationData}
-              />
+              {isEmptyPortfolio ? (
+                <EmptyDashboardState 
+                  title="Your Portfolio is Empty"
+                  description="Start building your portfolio by making a deposit and investing."
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                />
+              ) : (
+                <PortfolioView 
+                  monthlyPerformanceData={monthlyPerformanceData}
+                  allocationData={allocationData}
+                />
+              )}
             </TabsContent>
 
             <TabsContent 
@@ -144,10 +192,10 @@ const Dashboard: React.FC = () => {
             >
               <div className="space-y-6">
                 <BalanceCard 
-                  balance="$51,090.22"
+                  balance={`$${totalPortfolioValue.toFixed(2)}`}
                   change={{
-                    value: "$1,250.45",
-                    percentage: "2.5%",
+                    value: "$0.00",
+                    percentage: "0%",
                     isPositive: true
                   }}
                 />
@@ -162,10 +210,10 @@ const Dashboard: React.FC = () => {
             >
               <div className="space-y-6">
                 <BalanceCard 
-                  balance="$51,090.22"
+                  balance={`$${totalPortfolioValue.toFixed(2)}`}
                   change={{
-                    value: "$1,250.45",
-                    percentage: "2.5%",
+                    value: "$0.00",
+                    percentage: "0%",
                     isPositive: true
                   }}
                 />

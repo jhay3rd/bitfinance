@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import useAuth from "@/hooks/useAuth";
 
 interface SocialSignInProps {
   setIsLoading: (value: boolean) => void;
@@ -9,24 +9,17 @@ interface SocialSignInProps {
 }
 
 const SocialSignIn: React.FC<SocialSignInProps> = ({ setIsLoading, onSuccess }) => {
-  const { toast } = useToast();
+  const { googleSignIn, appleSignIn } = useAuth();
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      // This would be replaced with actual Google authentication logic
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      toast({
-        title: "Google Sign-In Successful",
-        description: "Welcome to BitFinance!",
-      });
-      onSuccess();
+      const success = await googleSignIn();
+      if (success) {
+        onSuccess();
+      }
     } catch (error) {
-      toast({
-        title: "Sign-In Failed",
-        description: "Could not sign in with Google. Please try again.",
-        variant: "destructive"
-      });
+      console.error("Google sign in error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -35,19 +28,12 @@ const SocialSignIn: React.FC<SocialSignInProps> = ({ setIsLoading, onSuccess }) 
   const handleAppleSignIn = async () => {
     setIsLoading(true);
     try {
-      // This would be replaced with actual Apple authentication logic
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      toast({
-        title: "Apple Sign-In Successful",
-        description: "Welcome to BitFinance!",
-      });
-      onSuccess();
+      const success = await appleSignIn();
+      if (success) {
+        onSuccess();
+      }
     } catch (error) {
-      toast({
-        title: "Sign-In Failed",
-        description: "Could not sign in with Apple. Please try again.",
-        variant: "destructive"
-      });
+      console.error("Apple sign in error:", error);
     } finally {
       setIsLoading(false);
     }
