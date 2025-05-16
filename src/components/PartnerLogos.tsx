@@ -4,14 +4,46 @@ import { Card } from "@/components/ui/card";
 
 const PartnerLogos: React.FC = () => {
   const partners = [
-    { name: "Binance", logo: "https://cryptologos.cc/logos/binance-coin-bnb-logo.svg" },
-    { name: "Bybit", logo: "https://cryptologos.cc/logos/bybit-logo.svg" },
-    { name: "TradingView", logo: "https://www.tradingview.com/pine-script-docs/en/v5/_images/tradingview-logo.svg" },
-    { name: "Skrill", logo: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Skrill_logo.svg" },
-    { name: "PayPal", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png" },
-    { name: "Kraken", logo: "https://cryptologos.cc/logos/kraken-logo.svg" },
-    { name: "Coinbase", logo: "https://cryptologos.cc/logos/coinbase-logo.svg" },
-    { name: "Metamask", logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" }
+    { 
+      name: "Binance", 
+      logo: "https://cryptologos.cc/logos/binance-coin-bnb-logo.svg",
+      image: "https://cryptologos.cc/logos/binance-coin-bnb-logo.svg?v=025"
+    },
+    { 
+      name: "Bybit", 
+      logo: "https://cryptologos.cc/logos/bybit-logo.svg",
+      image: "https://cryptologos.cc/logos/bybit-bbt-logo.svg?v=025"
+    },
+    { 
+      name: "TradingView", 
+      logo: "https://www.tradingview.com/pine-script-docs/en/v5/_images/tradingview-logo.svg",
+      image: "https://static.tradingview.com/static/images/logo-tradingview.svg"
+    },
+    { 
+      name: "Skrill", 
+      logo: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Skrill_logo.svg",
+      image: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Skrill_logo.svg"
+    },
+    { 
+      name: "PayPal", 
+      logo: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png",
+      image: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png"
+    },
+    { 
+      name: "Kraken", 
+      logo: "https://cryptologos.cc/logos/kraken-logo.svg",
+      image: "https://cryptologos.cc/logos/kraken-krak-logo.svg?v=025"
+    },
+    { 
+      name: "Coinbase", 
+      logo: "https://cryptologos.cc/logos/coinbase-logo.svg",
+      image: "https://cryptologos.cc/logos/coinbase-coin-logo.svg?v=025"
+    },
+    { 
+      name: "Metamask", 
+      logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
+      image: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
+    }
   ];
 
   return (
@@ -23,7 +55,7 @@ const PartnerLogos: React.FC = () => {
             <Card key={index} className="p-4 flex items-center justify-center w-24 h-24 md:w-32 md:h-32 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex flex-col items-center">
                 <img 
-                  src={partner.logo} 
+                  src={partner.image} 
                   alt={`${partner.name} logo`} 
                   className="h-10 md:h-16 w-auto object-contain" 
                 />

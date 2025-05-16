@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -49,18 +48,6 @@ const News: React.FC = () => {
       date: "2 hours ago",
       url: "#",
       tags: ["Bitcoin", "Markets", "Trending"],
-    },
-    {
-      id: 2,
-      title: "Ethereum Merge Successfully Completed: What You Need to Know",
-      description:
-        "The Ethereum network has successfully transitioned to a Proof-of-Stake consensus mechanism, reducing energy consumption by 99% and setting the stage for Ethereum 2.0.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1621501103258-3e30e51c2bf2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80",
-      source: "BlockchainToday",
-      date: "1 day ago",
-      url: "#",
-      tags: ["Ethereum", "Technology", "Environment"],
     },
     {
       id: 3,
