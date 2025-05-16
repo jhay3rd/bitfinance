@@ -81,9 +81,13 @@ export const userDataService = {
       portfolio.assets.push(asset);
     }
     
-    // Recalculate total value
+    // Recalculate total value - Fix: Convert string to number before adding
     portfolio.totalValue = portfolio.assets.reduce(
-      (total, asset) => total + parseFloat(asset.value.replace(/[^0-9.-]+/g, "")), 
+      (total, asset) => {
+        // First convert the asset value string to a number
+        const numericValue = parseFloat(asset.value.replace(/[^0-9.-]+/g, ""));
+        return total + numericValue;
+      }, 
       0
     );
     
