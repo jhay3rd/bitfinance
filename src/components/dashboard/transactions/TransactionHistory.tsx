@@ -87,20 +87,60 @@ const getStatusBadgeClasses = (status: string) => {
 };
 
 const TransactionHistory: React.FC = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>(defaultTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  // Load transactions from localStorage on component mount
+  // Load and merge transactions from localStorage on component mount
   useEffect(() => {
-    const storedTransactions = localStorage.getItem('transactions');
-    if (storedTransactions) {
-      try {
-        const parsedTransactions = JSON.parse(storedTransactions) as Transaction[];
-        // Combine with default transactions, but prioritize stored ones
-        setTransactions([...parsedTransactions, ...defaultTransactions].slice(0, 10));
-      } catch (error) {
-        console.error('Error parsing stored transactions:', error);
+    const loadTransactions = () => {
+      const storedTransactions = localStorage.getItem('transactions');
+      let userTransactions: Transaction[] = [];
+      
+      if (storedTransactions) {
+        try {
+          userTransactions = JSON.parse(storedTransactions) as Transaction[];
+          // Ensure transaction dates are properly formatted for sorting
+          userTransactions = userTransactions.map(tx => ({
+            ...tx,
+            // Convert date to sortable format if necessary
+            date: tx.date 
+          }));
+        } catch (error) {
+          console.error('Error parsing stored transactions:', error);
+        }
       }
-    }
+      
+      // Combine user transactions with default transactions
+      const allTransactions = [
+        ...userTransactions, 
+        ...defaultTransactions.filter(dt => 
+          !userTransactions.some(ut => ut.id === dt.id)
+        )
+      ];
+      
+      // Sort by date (most recent first)
+      const sortedTransactions = [...allTransactions].sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      // Limit to 10 transactions for display
+      setTransactions(sortedTransactions.slice(0, 10));
+    };
+
+    // Add event listener for storage changes
+    window.addEventListener('storage', loadTransactions);
+    
+    // Initial load
+    loadTransactions();
+    
+    // Periodic check for new transactions (every 5 seconds)
+    const intervalId = setInterval(loadTransactions, 5000);
+    
+    return () => {
+      window.removeEventListener('storage', loadTransactions);
+      clearInterval(intervalId);
+    };
   }, []);
 
   return (

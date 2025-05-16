@@ -23,6 +23,7 @@ import FAQ from "./pages/FAQ";
 import PlansPage from "./pages/dashboard/PlansPage";
 import SettingsPage from "./pages/dashboard/SettingsPage";
 import SupportPage from "./pages/dashboard/SupportPage";
+import TransactionsPage from "./pages/dashboard/TransactionsPage";
 import DepositRedirect from "./pages/dashboard/DepositRedirect";
 import DepositConfirm from "./pages/dashboard/DepositConfirm";
 import WithdrawConfirm from "./pages/dashboard/WithdrawConfirm";
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/dashboard/plans" element={<PlansPage />} />
           <Route path="/dashboard/settings" element={<SettingsPage />} />
           <Route path="/dashboard/support" element={<SupportPage />} />
+          <Route path="/dashboard/transactions" element={<TransactionsPage />} />
           <Route path="/dashboard/deposit" element={<DepositRedirect />} />
           <Route path="/dashboard/deposit/confirm" element={<DepositConfirm />} />
           <Route path="/dashboard/withdraw/confirm" element={<WithdrawConfirm />} />
