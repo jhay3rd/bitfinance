@@ -1,9 +1,21 @@
-
 import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatBubble from "@/components/ChatBubble";
-import { Shield, Cookie, Settings, AlertTriangle, Info, Check } from "lucide-react";
+import { 
+  Shield, 
+  Cookie, 
+  Settings, 
+  AlertTriangle, 
+  Info, 
+  Check,
+  BarChart,
+  Target,
+  List,
+  Sliders,
+  RefreshCw,
+  MessageCircle
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 const Cookies: React.FC = () => {
