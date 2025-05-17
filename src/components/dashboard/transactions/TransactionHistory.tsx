@@ -11,7 +11,7 @@ import {
 import { userDataService } from "@/services/userDataService";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 
 interface Transaction {
   id: string;
@@ -21,26 +21,6 @@ interface Transaction {
   date: string;
   status: 'approved' | 'pending' | 'reviewing' | 'rejected' | 'completed';
 }
-
-// Default transactions as fallback
-const defaultTransactions: Transaction[] = [
-  {
-    id: "tx1",
-    type: "deposit",
-    amount: "$500.00",
-    asset: "BTC",
-    date: "May 10, 2023",
-    status: "approved"
-  },
-  {
-    id: "tx2",
-    type: "deposit",
-    amount: "$1,000.00",
-    asset: "ETH",
-    date: "May 5, 2023",
-    status: "pending"
-  }
-];
 
 const getStatusBadgeClasses = (status: string) => {
   switch (status) {
@@ -62,26 +42,12 @@ const getStatusBadgeClasses = (status: string) => {
 const TransactionHistory: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  // Load and merge transactions from user data service on component mount
+  // Load transactions from user data service on component mount
   useEffect(() => {
     const loadTransactions = () => {
-      // Get user-specific transactions
+      // Get user-specific transactions only - no more default transactions
       const userTransactions = userDataService.getTransactions();
-      
-      // If user has no transactions yet but they're logged in, show default transactions
-      const transactionsToShow = userTransactions.length > 0 
-        ? userTransactions 
-        : defaultTransactions;
-      
-      // Sort by date (most recent first)
-      const sortedTransactions = [...transactionsToShow].sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return dateB.getTime() - dateA.getTime();
-      });
-      
-      // Limit to 5 transactions for display
-      setTransactions(sortedTransactions.slice(0, 5));
+      setTransactions(userTransactions);
     };
 
     // Add event listener for storage changes
@@ -134,8 +100,15 @@ const TransactionHistory: React.FC = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
-                  No transactions found
+                <TableCell colSpan={5} className="text-center py-10">
+                  <div className="flex flex-col items-center gap-2">
+                    <p className="text-muted-foreground mb-2">No transactions found</p>
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to="/dashboard" onClick={() => document.getElementById('deposit-tab')?.click()}>
+                        <Plus className="mr-1 h-4 w-4" /> Make your first transaction
+                      </Link>
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             )}

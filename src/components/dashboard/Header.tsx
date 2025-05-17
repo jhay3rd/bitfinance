@@ -40,7 +40,7 @@ const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
       <div className="container flex h-16 items-center justify-between py-4 px-4 sm:px-6">
-        <Link to="/dashboard" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2">
           <img src="/assets/logo-icon.svg" alt="BitFinance" className="h-8 w-8" />
           <span className="text-xl font-bold tracking-tight text-primary dark:text-white">
             BitFinance

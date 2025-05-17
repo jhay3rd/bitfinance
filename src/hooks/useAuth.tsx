@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService, AuthState } from '../services/authService';
@@ -83,10 +84,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Google sign-in handler
+  // NOTE: This is a mock implementation. In a production app, you would integrate with Google OAuth API
+  // using something like Firebase Auth, Auth0, or a custom OAuth implementation
   const googleSignIn = async (): Promise<boolean> => {
     setIsLoading(true);
     try {
-      // In a real app, this would use Google OAuth
+      // In a real app, this would redirect to Google OAuth
       // For demo, we'll create a mock Google user
       const mockGoogleUser = {
         name: "Google User",
@@ -115,10 +118,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Apple sign-in handler
+  // NOTE: This is a mock implementation. In a production app, you would integrate with Apple Sign In
+  // using their JavaScript SDK or a third-party auth provider like Firebase Auth or Auth0
   const appleSignIn = async (): Promise<boolean> => {
     setIsLoading(true);
     try {
-      // In a real app, this would use Apple OAuth
+      // In a real app, this would redirect to Apple OAuth
       // For demo, we'll create a mock Apple user
       const mockAppleUser = {
         name: "Apple User",

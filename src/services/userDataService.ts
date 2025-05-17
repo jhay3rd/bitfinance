@@ -81,11 +81,13 @@ export const userDataService = {
       portfolio.assets.push(asset);
     }
     
-    // Recalculate total value - Fix: Convert string to number before adding
+    // Recalculate total value - Fix: Convert string or number to number before adding
     portfolio.totalValue = portfolio.assets.reduce(
       (total, asset) => {
-        // First convert the asset value string to a number
-        const numericValue = parseFloat(asset.value.replace(/[^0-9.-]+/g, ""));
+        // Handle asset value whether it's a string or already a number
+        const numericValue = typeof asset.value === 'string'
+          ? parseFloat(asset.value.replace(/[^0-9.-]+/g, ""))
+          : asset.value;
         return total + numericValue;
       }, 
       0
@@ -108,6 +110,7 @@ export const userDataService = {
       console.error('Failed to get transactions data', error);
     }
     
+    // Return empty array - no more default transactions
     return [];
   },
   

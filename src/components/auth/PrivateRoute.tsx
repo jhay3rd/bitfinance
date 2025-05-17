@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import useAuth from '@/hooks/useAuth';
@@ -22,6 +23,12 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
         // We'll handle this in the return statement
       }
     }
+    
+    // Scroll to top when route changes
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   }, [isAuthenticated, user, location.pathname]);
   
   if (!isAuthenticated) {

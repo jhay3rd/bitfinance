@@ -18,12 +18,13 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Plus } from "lucide-react";
 import Header from "@/components/dashboard/Header";
 import Sidebar from "@/components/dashboard/Sidebar";
 import MobileNavigation from "@/components/dashboard/MobileNavigation";
 import ChatBubble from "@/components/ChatBubble";
 import { userDataService } from "@/services/userDataService";
+import { Link } from "react-router-dom";
 
 interface Transaction {
   id: string;
@@ -33,58 +34,6 @@ interface Transaction {
   date: string;
   status: 'approved' | 'pending' | 'reviewing' | 'rejected' | 'completed';
 }
-
-// Default transactions as fallback
-const defaultTransactions: Transaction[] = [
-  {
-    id: "tx1",
-    type: "deposit",
-    amount: "$500.00",
-    asset: "BTC",
-    date: "May 10, 2023",
-    status: "approved"
-  },
-  {
-    id: "tx2",
-    type: "deposit",
-    amount: "$1,000.00",
-    asset: "ETH",
-    date: "May 5, 2023",
-    status: "pending"
-  },
-  {
-    id: "tx3",
-    type: "withdraw",
-    amount: "$250.00",
-    asset: "USDT",
-    date: "Apr 28, 2023",
-    status: "reviewing"
-  },
-  {
-    id: "tx4",
-    type: "deposit",
-    amount: "$2,000.00",
-    asset: "BTC",
-    date: "Apr 15, 2023",
-    status: "approved"
-  },
-  {
-    id: "tx5",
-    type: "withdraw",
-    amount: "$750.00",
-    asset: "ETH",
-    date: "Apr 5, 2023",
-    status: "rejected"
-  },
-  {
-    id: "tx6",
-    type: "investment",
-    amount: "$3,000.00",
-    asset: "Monthly Plan",
-    date: "Mar 20, 2023",
-    status: "completed"
-  }
-];
 
 const getStatusBadgeClasses = (status: string) => {
   switch (status) {
@@ -116,22 +65,9 @@ const TransactionsPage: React.FC = () => {
     setIsMounted(true);
     
     const loadTransactions = () => {
-      // Get user transactions from service
-      let userTransactions = userDataService.getTransactions();
-      
-      // If user has no transactions, use defaults as fallback
-      if (userTransactions.length === 0) {
-        userTransactions = defaultTransactions;
-      }
-      
-      // Sort by date (most recent first)
-      const sortedTransactions = [...userTransactions].sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return dateB.getTime() - dateA.getTime();
-      });
-      
-      setTransactions(sortedTransactions);
+      // Get user transactions from service - no more default fallback
+      const userTransactions = userDataService.getTransactions();
+      setTransactions(userTransactions);
     };
     
     // Add event listener for storage changes
@@ -139,6 +75,9 @@ const TransactionsPage: React.FC = () => {
     
     // Initial load
     loadTransactions();
+    
+    // Scroll to top on component mount
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     
     return () => {
       window.removeEventListener('storage', loadTransactions);
@@ -267,8 +206,15 @@ const TransactionsPage: React.FC = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                        No transactions found
+                      <TableCell colSpan={6} className="text-center py-12">
+                        <div className="flex flex-col items-center gap-3">
+                          <p className="text-muted-foreground mb-2">You haven't made any transactions yet</p>
+                          <Button variant="outline" asChild>
+                            <Link to="/dashboard" state={{ activeTab: "deposit" }}>
+                              <Plus className="mr-2 h-4 w-4" /> Make your first transaction
+                            </Link>
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   )}
