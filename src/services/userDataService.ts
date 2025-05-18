@@ -86,7 +86,7 @@ export const userDataService = {
       (total, asset) => {
         // Handle asset value whether it's a string or already a number
         const numericValue = typeof asset.value === 'string'
-          ? parseFloat(asset.value.replace(/[^0-9.-]+/g, ""))
+          ? parseFloat(asset.value.toString()) // Use toString() instead of replace
           : asset.value;
         return total + numericValue;
       }, 
