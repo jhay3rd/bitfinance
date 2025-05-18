@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card } from "@/components/ui/card";
 
@@ -57,7 +56,8 @@ const PartnerLogos: React.FC = () => {
                 <img 
                   src={partner.image} 
                   alt={`${partner.name} logo`} 
-                  className="h-10 md:h-16 w-auto object-contain" 
+                  className="h-16 md:h-20 w-auto object-contain bg-white rounded shadow-sm p-2" 
+                  style={{ maxWidth: '120px', background: '#fff' }}
                 />
                 <p className="text-xs mt-2 text-center text-gray-600 dark:text-gray-400">{partner.name}</p>
               </div>

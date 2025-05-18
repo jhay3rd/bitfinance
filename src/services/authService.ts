@@ -1,4 +1,3 @@
-
 // Authentication service to handle user login, registration, and session management
 
 interface UserProfile {
@@ -31,6 +30,51 @@ const getInitialAuthState = (): AuthState => {
 const generateUserId = (): string => {
   return 'user_' + Date.now().toString(36) + Math.random().toString(36).substring(2);
 };
+
+// Password reset token management
+const PASSWORD_RESET_PREFIX = 'reset_token_';
+
+const generateResetToken = (email: string) => {
+  const token = Math.random().toString(36).substr(2) + Date.now().toString(36);
+  localStorage.setItem(PASSWORD_RESET_PREFIX + token, JSON.stringify({ email, created: Date.now() }));
+  return token;
+};
+
+const validateResetToken = (token: string) => {
+  const data = localStorage.getItem(PASSWORD_RESET_PREFIX + token);
+  if (!data) return null;
+  const { email, created } = JSON.parse(data);
+  // Token valid for 1 hour
+  if (Date.now() - created > 60 * 60 * 1000) return null;
+  return email;
+};
+
+const resetPassword = (token: string, newPassword: string) => {
+  const email = validateResetToken(token);
+  if (!email) return false;
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+  if (!users[email]) return false;
+  users[email].password = newPassword;
+  localStorage.setItem('users', JSON.stringify(users));
+  localStorage.removeItem(PASSWORD_RESET_PREFIX + token);
+  return true;
+};
+
+// Migration: Ensure all users have a user ID
+const migrateUserIds = () => {
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+  let changed = false;
+  Object.keys(users).forEach(email => {
+    if (!users[email].id) {
+      users[email].id = generateUserId();
+      changed = true;
+    }
+  });
+  if (changed) localStorage.setItem('users', JSON.stringify(users));
+};
+
+// Run migration on load
+migrateUserIds();
 
 export const authService = {
   // Get current auth state
@@ -172,7 +216,11 @@ export const authService = {
   getCurrentUser: (): UserProfile | null => {
     const authState = getInitialAuthState();
     return authState.user;
-  }
+  },
+
+  generateResetToken,
+  validateResetToken,
+  resetPassword
 };
 
 // Initialize empty data for new users

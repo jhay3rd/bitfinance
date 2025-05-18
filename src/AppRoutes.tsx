@@ -1,4 +1,3 @@
-
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import Index from "./pages/Index";
@@ -26,6 +25,8 @@ import DepositConfirm from "./pages/dashboard/DepositConfirm";
 import WithdrawConfirm from "./pages/dashboard/WithdrawConfirm";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import WelcomePage from "./pages/dashboard/WelcomePage";
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 const AppRoutes = () => (
   <AuthProvider>
@@ -57,6 +58,8 @@ const AppRoutes = () => (
       <Route path="/terms" element={<Terms />} />
       <Route path="/cookies" element={<Cookies />} />
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>

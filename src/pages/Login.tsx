@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ import Footer from "@/components/Footer";
 import ChatBubble from "@/components/ChatBubble";
 import SocialSignIn from "@/components/auth/SocialSignIn";
 import useAuth from "@/hooks/useAuth";
+import { Eye, EyeOff } from 'lucide-react';
 
 interface LocationState {
   from?: {
@@ -32,6 +32,7 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const locationState = location.state as LocationState | null;
   const from = locationState?.from?.pathname || "/dashboard";
@@ -105,14 +106,26 @@ const Login: React.FC = () => {
                         Forgot password?
                       </Link>
                     </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((v) => !v)}
+                        className="absolute right-3 top-9 text-gray-400 hover:text-gray-600 focus:outline-none"
+                        tabIndex={-1}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        style={{ background: 'none', border: 'none', padding: 0 }}
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
                   </div>
                   <div className="flex items-center space-x-2 mt-1">
                     <Checkbox

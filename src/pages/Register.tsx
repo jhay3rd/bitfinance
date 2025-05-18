@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatBubble from "@/components/ChatBubble";
 import useAuth from "@/hooks/useAuth";
+import { Eye, EyeOff } from 'lucide-react';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -27,6 +27,8 @@ const Register: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -140,7 +142,7 @@ const Register: React.FC = () => {
                     <Label htmlFor="password">Password</Label>
                     <Input
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => {
@@ -149,12 +151,22 @@ const Register: React.FC = () => {
                       }}
                       required
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-3 top-9 text-gray-400 hover:text-gray-600 focus:outline-none"
+                      tabIndex={-1}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      style={{ background: 'none', border: 'none', padding: 0 }}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="confirmPassword">Confirm Password</Label>
                     <Input
                       id="confirmPassword"
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       placeholder="••••••••"
                       value={confirmPassword}
                       onChange={(e) => {
@@ -163,6 +175,16 @@ const Register: React.FC = () => {
                       }}
                       required
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((v) => !v)}
+                      className="absolute right-3 top-9 text-gray-400 hover:text-gray-600 focus:outline-none"
+                      tabIndex={-1}
+                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                      style={{ background: 'none', border: 'none', padding: 0 }}
+                    >
+                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                     {passwordError && (
                       <p className="text-sm text-red-600 dark:text-red-400">{passwordError}</p>
                     )}
