@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -30,51 +29,58 @@ import DepositConfirm from "./pages/dashboard/DepositConfirm";
 import WithdrawConfirm from "./pages/dashboard/WithdrawConfirm";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import WelcomePage from "./pages/dashboard/WelcomePage";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import MarqueePrices from './components/MarqueePrices';
 
 const queryClient = new QueryClient();
 
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'your-google-client-id';
+
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            
-            {/* Protected Dashboard Routes */}
-            <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-            <Route path="/dashboard/welcome" element={<PrivateRoute><WelcomePage /></PrivateRoute>} />
-            <Route path="/dashboard/invest/:planId" element={<PrivateRoute><InvestmentPlan /></PrivateRoute>} />
-            <Route path="/dashboard/plans" element={<PrivateRoute><PlansPage /></PrivateRoute>} />
-            <Route path="/dashboard/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
-            <Route path="/dashboard/support" element={<PrivateRoute><SupportPage /></PrivateRoute>} />
-            <Route path="/dashboard/transactions" element={<PrivateRoute><TransactionsPage /></PrivateRoute>} />
-            <Route path="/dashboard/deposit" element={<PrivateRoute><DepositRedirect /></PrivateRoute>} />
-            <Route path="/dashboard/deposit/confirm" element={<PrivateRoute><DepositConfirm /></PrivateRoute>} />
-            <Route path="/dashboard/withdraw/confirm" element={<PrivateRoute><WithdrawConfirm /></PrivateRoute>} />
-            
-            {/* Public Routes */}
-            <Route path="/markets" element={<Markets />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/features" element={<Features />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/about" element={<AboutUs />} />
-            <Route path="/career" element={<Careers />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/cookies" element={<Cookies />} />
-            <Route path="/faq" element={<FAQ />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <MarqueePrices />
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              
+              {/* Protected Dashboard Routes */}
+              <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+              <Route path="/dashboard/welcome" element={<PrivateRoute><WelcomePage /></PrivateRoute>} />
+              <Route path="/dashboard/invest/:planId" element={<PrivateRoute><InvestmentPlan /></PrivateRoute>} />
+              <Route path="/dashboard/plans" element={<PrivateRoute><PlansPage /></PrivateRoute>} />
+              <Route path="/dashboard/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
+              <Route path="/dashboard/support" element={<PrivateRoute><SupportPage /></PrivateRoute>} />
+              <Route path="/dashboard/transactions" element={<PrivateRoute><TransactionsPage /></PrivateRoute>} />
+              <Route path="/dashboard/deposit" element={<PrivateRoute><DepositRedirect /></PrivateRoute>} />
+              <Route path="/dashboard/deposit/confirm" element={<PrivateRoute><DepositConfirm /></PrivateRoute>} />
+              <Route path="/dashboard/withdraw/confirm" element={<PrivateRoute><WithdrawConfirm /></PrivateRoute>} />
+              
+              {/* Public Routes */}
+              <Route path="/markets" element={<Markets />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/features" element={<Features />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<AboutUs />} />
+              <Route path="/career" element={<Careers />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/cookies" element={<Cookies />} />
+              <Route path="/faq" element={<FAQ />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </AuthProvider>
+  </GoogleOAuthProvider>
 );
 
 export default App;

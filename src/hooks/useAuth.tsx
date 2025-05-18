@@ -1,8 +1,9 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService, AuthState } from '../services/authService';
 import { useToast } from './use-toast';
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<boolean>;
@@ -84,69 +85,119 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Google sign-in handler
-  // NOTE: This is a mock implementation. In a production app, you would integrate with Google OAuth API
-  // using something like Firebase Auth, Auth0, or a custom OAuth implementation
   const googleSignIn = async (): Promise<boolean> => {
     setIsLoading(true);
     try {
-      // In a real app, this would redirect to Google OAuth
-      // For demo, we'll create a mock Google user
-      const mockGoogleUser = {
-        name: "Google User",
-        email: `google_user_${Date.now()}@gmail.com`,
-        picture: "https://example.com/avatar.png"
-      };
-      
-      const user = authService.socialLogin('google', mockGoogleUser);
-      setAuthState({ isAuthenticated: true, user });
-      
-      toast({
-        title: "Google Sign-In Successful",
-        description: `Welcome to BitFinance, ${user.fullName}!`,
+      return new Promise((resolve, reject) => {
+        const login = useGoogleLogin({
+          onSuccess: async (tokenResponse) => {
+            try {
+              const backendRes = await axios.post('/api/auth/google', { token: tokenResponse.access_token });
+              const { token, user } = backendRes.data;
+              // Store JWT in localStorage
+              localStorage.setItem('jwt', token);
+              setAuthState({ isAuthenticated: true, user });
+              toast({
+                title: 'Google Sign-In Successful',
+                description: `Welcome to BitFinance, ${user.name || user.fullName || user.email}!`,
+              });
+              resolve(true);
+            } catch (err: any) {
+              toast({
+                variant: 'destructive',
+                title: 'Google Sign-In Failed',
+                description: err?.response?.data?.message || err.message,
+              });
+              resolve(false);
+            } finally {
+              setIsLoading(false);
+            }
+          },
+          onError: (error) => {
+            toast({
+              variant: 'destructive',
+              title: 'Google Sign-In Failed',
+              description: error?.error || 'Google sign-in was cancelled or failed.',
+            });
+            setIsLoading(false);
+            resolve(false);
+          },
+        });
+        login();
       });
-      return true;
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        variant: "destructive",
-        title: "Google Sign-In Failed",
-        description: "Could not sign in with Google",
+        variant: 'destructive',
+        title: 'Google Sign-In Failed',
+        description: error?.message || 'Could not sign in with Google',
       });
-      return false;
-    } finally {
       setIsLoading(false);
+      return false;
     }
   };
 
   // Apple sign-in handler
-  // NOTE: This is a mock implementation. In a production app, you would integrate with Apple Sign In
-  // using their JavaScript SDK or a third-party auth provider like Firebase Auth or Auth0
   const appleSignIn = async (): Promise<boolean> => {
     setIsLoading(true);
     try {
-      // In a real app, this would redirect to Apple OAuth
-      // For demo, we'll create a mock Apple user
-      const mockAppleUser = {
-        name: "Apple User",
-        email: `apple_user_${Date.now()}@icloud.com`,
-      };
-      
-      const user = authService.socialLogin('apple', mockAppleUser);
-      setAuthState({ isAuthenticated: true, user });
-      
-      toast({
-        title: "Apple Sign-In Successful",
-        description: `Welcome to BitFinance, ${user.fullName}!`,
+      // Check if AppleID JS SDK is loaded
+      if (!(window as any).AppleID) {
+        toast({
+          variant: 'destructive',
+          title: 'Apple Sign-In Failed',
+          description: 'Apple Sign-In is not supported in this browser.',
+        });
+        setIsLoading(false);
+        return false;
+      }
+      return new Promise((resolve) => {
+        (window as any).AppleID.auth.init({
+          clientId: import.meta.env.VITE_APPLE_CLIENT_ID || 'your-apple-client-id',
+          scope: 'name email',
+          redirectURI: window.location.origin + '/login',
+          usePopup: true,
+        });
+        (window as any).AppleID.auth.signIn().then(async (response: any) => {
+          try {
+            const id_token = response.authorization && response.authorization.id_token;
+            if (!id_token) throw new Error('No id_token received from Apple');
+            const backendRes = await axios.post('/api/auth/apple', { token: id_token });
+            const { token, user } = backendRes.data;
+            localStorage.setItem('jwt', token);
+            setAuthState({ isAuthenticated: true, user });
+            toast({
+              title: 'Apple Sign-In Successful',
+              description: `Welcome to BitFinance, ${user.name || user.fullName || user.email}!`,
+            });
+            resolve(true);
+          } catch (err: any) {
+            toast({
+              variant: 'destructive',
+              title: 'Apple Sign-In Failed',
+              description: err?.response?.data?.message || err.message,
+            });
+            resolve(false);
+          } finally {
+            setIsLoading(false);
+          }
+        }).catch((error: any) => {
+          toast({
+            variant: 'destructive',
+            title: 'Apple Sign-In Failed',
+            description: error?.error || 'Apple sign-in was cancelled or failed.',
+          });
+          setIsLoading(false);
+          resolve(false);
+        });
       });
-      return true;
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        variant: "destructive",
-        title: "Apple Sign-In Failed",
-        description: "Could not sign in with Apple",
+        variant: 'destructive',
+        title: 'Apple Sign-In Failed',
+        description: error?.message || 'Could not sign in with Apple',
       });
-      return false;
-    } finally {
       setIsLoading(false);
+      return false;
     }
   };
 

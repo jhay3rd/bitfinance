@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -23,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, TrendingDown, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
 
 interface CryptoData {
   id: number;
@@ -48,134 +48,52 @@ const Markets: React.FC = () => {
     key: "rank",
     direction: "ascending",
   });
+  const [cryptoData, setCryptoData] = useState<CryptoData[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Mock crypto data
-  const cryptoData: CryptoData[] = [
-    {
-      id: 1,
-      rank: 1,
-      name: "Bitcoin",
-      symbol: "BTC",
-      price: 65432.78,
-      marketCap: 1250000000000,
-      volume24h: 38500000000,
-      change24h: 2.5,
-      change7d: 7.8,
-      logo: "https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=022",
-    },
-    {
-      id: 2,
-      rank: 2,
-      name: "Ethereum",
-      symbol: "ETH",
-      price: 3543.21,
-      marketCap: 420000000000,
-      volume24h: 17300000000,
-      change24h: 1.8,
-      change7d: 4.2,
-      logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png?v=022",
-    },
-    {
-      id: 3,
-      rank: 3,
-      name: "Binance Coin",
-      symbol: "BNB",
-      price: 654.32,
-      marketCap: 98000000000,
-      volume24h: 2300000000,
-      change24h: -0.5,
-      change7d: 2.1,
-      logo: "https://cryptologos.cc/logos/bnb-bnb-logo.png?v=022",
-    },
-    {
-      id: 4,
-      rank: 4,
-      name: "Solana",
-      symbol: "SOL",
-      price: 143.87,
-      marketCap: 61000000000,
-      volume24h: 9800000000,
-      change24h: 4.2,
-      change7d: 12.5,
-      logo: "https://cryptologos.cc/logos/solana-sol-logo.png?v=022",
-    },
-    {
-      id: 5,
-      rank: 5,
-      name: "Ripple",
-      symbol: "XRP",
-      price: 0.62,
-      marketCap: 31500000000,
-      volume24h: 1690000000,
-      change24h: 0.8,
-      change7d: -1.2,
-      logo: "https://cryptologos.cc/logos/xrp-xrp-logo.png?v=022",
-    },
-    {
-      id: 6,
-      rank: 6,
-      name: "Cardano",
-      symbol: "ADA",
-      price: 0.52,
-      marketCap: 18500000000,
-      volume24h: 1200000000,
-      change24h: -1.3,
-      change7d: -3.7,
-      logo: "https://cryptologos.cc/logos/cardano-ada-logo.png?v=022",
-    },
-    {
-      id: 7,
-      rank: 7,
-      name: "Polkadot",
-      symbol: "DOT",
-      price: 22.75,
-      marketCap: 16200000000,
-      volume24h: 1050000000,
-      change24h: 3.1,
-      change7d: 8.3,
-      logo: "https://cryptologos.cc/logos/polkadot-new-dot-logo.png?v=022",
-    },
-    {
-      id: 8,
-      rank: 8,
-      name: "Avalanche",
-      symbol: "AVAX",
-      price: 34.76,
-      marketCap: 12800000000,
-      volume24h: 870000000,
-      change24h: -2.3,
-      change7d: -5.1,
-      logo: "https://cryptologos.cc/logos/avalanche-avax-logo.png?v=022",
-    },
-    {
-      id: 9,
-      rank: 9,
-      name: "Dogecoin",
-      symbol: "DOGE",
-      price: 0.18,
-      marketCap: 11900000000,
-      volume24h: 950000000,
-      change24h: 6.7,
-      change7d: 15.3,
-      logo: "https://cryptologos.cc/logos/dogecoin-doge-logo.png?v=022",
-    },
-    {
-      id: 10,
-      rank: 10,
-      name: "Chainlink",
-      symbol: "LINK",
-      price: 17.82,
-      marketCap: 10600000000,
-      volume24h: 730000000,
-      change24h: 1.5,
-      change7d: 3.9,
-      logo: "https://cryptologos.cc/logos/chainlink-link-logo.png?v=022",
-    },
-  ];
+  // Fetch live data from CoinGecko
+  const fetchMarketData = async () => {
+    try {
+      const res = await axios.get(
+        "https://api.coingecko.com/api/v3/coins/markets",
+        {
+          params: {
+            vs_currency: "usd",
+            order: "market_cap_desc",
+            per_page: 10,
+            page: 1,
+            sparkline: false,
+            price_change_percentage: "24h,7d",
+          },
+        }
+      );
+      const data = res.data.map((coin: any, idx: number) => ({
+        id: coin.id,
+        rank: coin.market_cap_rank,
+        name: coin.name,
+        symbol: coin.symbol.toUpperCase(),
+        price: coin.current_price,
+        marketCap: coin.market_cap,
+        volume24h: coin.total_volume,
+        change24h: coin.price_change_percentage_24h,
+        change7d: coin.price_change_percentage_7d_in_currency,
+        logo: coin.image,
+      }));
+      setCryptoData(data);
+      setIsLoaded(true);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to fetch market data",
+        description: (error as any)?.message || "Could not load crypto prices.",
+      });
+    }
+  };
 
   useEffect(() => {
-    setIsLoaded(true);
+    fetchMarketData();
+    const interval = setInterval(fetchMarketData, 30 * 60 * 1000); // 30 minutes
+    return () => clearInterval(interval);
   }, []);
 
   const handleTrade = (cryptoName: string) => {
@@ -232,6 +150,18 @@ const Markets: React.FC = () => {
       return 0;
     });
   };
+
+  useEffect(() => {
+    const scriptId = 'cmc-widget-script';
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.type = 'text/javascript';
+      script.async = true;
+      script.src = 'https://widgets.coinmarketcap.com/v2/ticker/1/?base=USD&theme=light&transparent=true&autosize=true';
+      document.getElementById('coinmarketcap-widget-1')?.appendChild(script);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -291,6 +221,14 @@ const Markets: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Live Chart Section */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold mb-4 text-center">Live Bitcoin Chart</h2>
+            <div className="flex justify-center">
+              <div id="coinmarketcap-widget-1" style={{ width: '100%', maxWidth: 900 }}></div>
+            </div>
           </div>
 
           <Card className={`transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>

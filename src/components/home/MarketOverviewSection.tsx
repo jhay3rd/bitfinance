@@ -1,8 +1,8 @@
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import CryptoPriceCard from "@/components/CryptoPriceCard";
+import axios from "axios";
 
 interface CryptoData {
   id: number;
@@ -17,51 +17,46 @@ interface CryptoData {
 
 const MarketOverviewSection: React.FC = () => {
   const navigate = useNavigate();
-  
-  // Mock data for crypto prices
-  const cryptoData: CryptoData[] = [
-    {
-      id: 1,
-      name: "Bitcoin",
-      symbol: "btc",
-      price: 65432.78,
-      change24h: 2.5,
-      volume24h: 38500000000,
-      marketCap: 1250000000000,
-      image: "https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=022"
-    },
-    {
-      id: 2,
-      name: "Ethereum",
-      symbol: "eth",
-      price: 3543.21,
-      change24h: 1.8,
-      volume24h: 17300000000,
-      marketCap: 420000000000,
-      image: "https://cryptologos.cc/logos/ethereum-eth-logo.png?v=022"
-    },
-    {
-      id: 3,
-      name: "Solana",
-      symbol: "sol",
-      price: 143.87,
-      change24h: 4.2,
-      volume24h: 9800000000,
-      marketCap: 61000000000,
-      image: "https://cryptologos.cc/logos/solana-sol-logo.png?v=022"
-    },
-    {
-      id: 4,
-      name: "Cardano",
-      symbol: "ada",
-      price: 0.52,
-      change24h: -1.3,
-      volume24h: 1200000000,
-      marketCap: 18500000000,
-      image: "https://cryptologos.cc/logos/cardano-ada-logo.png?v=022"
-    },
-  ];
-  
+  const [cryptoData, setCryptoData] = useState<CryptoData[]>([]);
+
+  // Fetch live data from CoinGecko
+  const fetchMarketData = async () => {
+    try {
+      const res = await axios.get(
+        "https://api.coingecko.com/api/v3/coins/markets",
+        {
+          params: {
+            vs_currency: "usd",
+            order: "market_cap_desc",
+            per_page: 4,
+            page: 1,
+            sparkline: false,
+            price_change_percentage: "24h",
+          },
+        }
+      );
+      const data = res.data.map((coin: any) => ({
+        id: coin.id,
+        name: coin.name,
+        symbol: coin.symbol,
+        price: coin.current_price,
+        change24h: coin.price_change_percentage_24h,
+        volume24h: coin.total_volume,
+        marketCap: coin.market_cap,
+        image: coin.image,
+      }));
+      setCryptoData(data);
+    } catch (error) {
+      // Optionally handle error
+    }
+  };
+
+  useEffect(() => {
+    fetchMarketData();
+    const interval = setInterval(fetchMarketData, 30 * 60 * 1000); // 30 minutes
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="py-16 bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
