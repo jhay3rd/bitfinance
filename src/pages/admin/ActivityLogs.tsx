@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 import { getActivityLogs } from '../../services/api';
 
@@ -22,7 +22,10 @@ const columns: GridColDef[] = [
     width: 180, 
     type: 'dateTime',
     valueFormatter: (params) => {
-      return new Date(params.value as string);
+      if (params.value) {
+        return new Date(params.value as string);
+      }
+      return null;
     }
   },
   // Add more fields as needed
