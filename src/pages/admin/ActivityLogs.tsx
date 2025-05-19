@@ -1,6 +1,7 @@
+
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
-import { DataGrid, GridColDef, GridValueFormatterParams as GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 import { getActivityLogs } from '../../services/api';
 
