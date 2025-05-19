@@ -1,17 +1,24 @@
+
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress, Grid, Paper } from '@mui/material';
 import { getAnalytics } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 
-const AdminAnalytics = () => {
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+interface AnalyticsStats {
+  totalUsers: number;
+  activeUsers: number;
+  // Add other stat properties as needed
+}
+
+const AdminAnalytics: React.FC = () => {
+  const [stats, setStats] = useState<AnalyticsStats | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const adminAuth = localStorage.getItem('adminAuth');
     if (!adminAuth) {
-      navigate('/admin/Login');
+      navigate('/admin/login');
       return;
     }
     getAnalytics()
