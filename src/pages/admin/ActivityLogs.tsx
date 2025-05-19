@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
@@ -22,11 +21,8 @@ const columns: GridColDef[] = [
     width: 180, 
     type: 'dateTime',
     valueFormatter: (params) => {
-      const value = params.value;
-      if (value != null) {
-        return new Date(String(value));
-      }
-      return null;
+      // Use proper typing to avoid the 'never' type error
+      return params.value ? new Date(String(params.value)) : null;
     }
   },
   // Add more fields as needed
