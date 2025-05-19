@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress, Grid, Paper } from '@mui/material';
 import { getAnalytics } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 const AdminAnalytics = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const adminAuth = localStorage.getItem('adminAuth');
+    if (!adminAuth) {
+      navigate('/admin/Login');
+      return;
+    }
     getAnalytics()
       .then(res => setStats(res.data))
       .catch(() => setStats(null))
       .finally(() => setLoading(false));
-  }, []);
+  }, [navigate]);
 
   return (
     <Box>

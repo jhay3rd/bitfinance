@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   verificationToken: { type: String },
   resetToken: { type: String },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  investmentBalance: { type: Number, default: 0 },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema); 

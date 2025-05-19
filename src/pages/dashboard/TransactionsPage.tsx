@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -25,6 +24,8 @@ import MobileNavigation from "@/components/dashboard/MobileNavigation";
 import ChatBubble from "@/components/ChatBubble";
 import { userDataService } from "@/services/userDataService";
 import { Link } from "react-router-dom";
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 interface Transaction {
   id: string;
@@ -59,6 +60,11 @@ const TransactionsPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [activeTab, setActiveTab] = useState("transactions");
   const [isMounted, setIsMounted] = useState(false);
+  const { user } = useAuth ? useAuth() : { user: null };
+  const { toast } = useToast();
+  const [newType, setNewType] = useState('deposit');
+  const [newAmount, setNewAmount] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   
   useEffect(() => {
     // Animation helper
@@ -97,6 +103,39 @@ const TransactionsPage: React.FC = () => {
     return matchesSearch && matchesType && matchesStatus;
   });
 
+  const handleCreateTransaction = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAmount || isNaN(Number(newAmount)) || Number(newAmount) <= 0) {
+      toast({ title: 'Invalid amount', description: 'Please enter a valid amount.', variant: 'destructive' });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/admin/transactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user?.id || localStorage.getItem('userId'),
+          amount: Number(newAmount),
+          type: newType,
+        }),
+      });
+      if (res.ok) {
+        toast({ title: 'Transaction submitted', description: 'Your transaction is pending approval.' });
+        setNewAmount('');
+        setNewType('deposit');
+        // Optionally reload transactions
+        window.location.reload();
+      } else {
+        toast({ title: 'Error', description: 'Failed to create transaction', variant: 'destructive' });
+      }
+    } catch {
+      toast({ title: 'Error', description: 'Failed to create transaction', variant: 'destructive' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
@@ -111,6 +150,28 @@ const TransactionsPage: React.FC = () => {
               View and filter all your transaction history
             </p>
           </div>
+
+          <Card className="p-4 mb-6">
+            <form onSubmit={handleCreateTransaction} className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="w-full md:w-40">
+                <label className="block text-sm font-medium mb-1">Type</label>
+                <Select value={newType} onValueChange={setNewType}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="deposit">Deposit</SelectItem>
+                    <SelectItem value="withdraw">Withdrawal</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-full md:w-40">
+                <label className="block text-sm font-medium mb-1">Amount</label>
+                <Input type="number" min="1" value={newAmount} onChange={e => setNewAmount(e.target.value)} required />
+              </div>
+              <Button type="submit" disabled={submitting} className="w-full md:w-auto">{submitting ? 'Submitting...' : 'Create Transaction'}</Button>
+            </form>
+          </Card>
 
           <Card className="p-4 mb-6">
             <div className="flex flex-col md:flex-row gap-4">

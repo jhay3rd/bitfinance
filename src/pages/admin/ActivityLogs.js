@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import { useNavigate } from 'react-router-dom';
 import { getActivityLogs } from '../../services/api';
 
 const columns = [
@@ -14,13 +15,19 @@ const columns = [
 const AdminActivityLogs = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const adminAuth = localStorage.getItem('adminAuth');
+    if (!adminAuth) {
+      navigate('/admin/Login');
+      return;
+    }
     getActivityLogs()
       .then(res => setLogs(res.data.logs || []))
       .catch(() => setLogs([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [navigate]);
 
   return (
     <Box>

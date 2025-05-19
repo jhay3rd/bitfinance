@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, HelpCircle, MessageSquare, Phone, Mail, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/dashboard/Header";
+import { useAuth } from '@/hooks/useAuth';
 
 const SupportPage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,26 +16,48 @@ const SupportPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("contact");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const { user } = useAuth ? useAuth() : { user: null };
   
-  const handleSubmitTicket = (e: React.FormEvent) => {
+  const handleSubmitTicket = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!subject.trim() || !message.trim()) {
       toast({
-        title: "Missing information",
-        description: "Please fill in all required fields",
-        variant: "destructive",
+        title: 'Missing information',
+        description: 'Please fill in all required fields',
+        variant: 'destructive',
       });
       return;
     }
-    
-    toast({
-      title: "Support ticket created",
-      description: "We've received your request and will respond shortly."
-    });
-    
-    setSubject("");
-    setMessage("");
+    try {
+      const res = await fetch('/api/admin/support-messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user?.email || localStorage.getItem('userEmail'),
+          message: `${subject}\n${message}`,
+        }),
+      });
+      if (res.ok) {
+        toast({
+          title: 'Support ticket created',
+          description: "We've received your request and will respond shortly.",
+        });
+        setSubject('');
+        setMessage('');
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Failed to send support message',
+          variant: 'destructive',
+        });
+      }
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to send support message',
+        variant: 'destructive',
+      });
+    }
   };
   
   const faqItems = [
