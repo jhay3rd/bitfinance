@@ -36,7 +36,12 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ supportBadge = 0, transacti
   >
     <List sx={{ marginTop: '64px' }}>
       {navItems.map((item) => (
-        <ListItem button key={item.text} component={Link} to={item.path}>
+        <ListItem 
+          key={item.text} 
+          component={Link} 
+          to={item.path}
+          sx={{ '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' } }}
+        >
           <ListItemIcon>
             {item.badge === 'support' && supportBadge > 0 ? (
               <Badge badgeContent={supportBadge} color="error">{item.icon}</Badge>

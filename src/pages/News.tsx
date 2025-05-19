@@ -5,11 +5,25 @@ import Footer from '../components/Footer';
 import ChatBubble from '../components/ChatBubble';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { NewsCard } from '@/components/NewsCard';
-import { NewsSearch } from '@/components/news/NewsSearch';
-import { CategoryFilter } from '@/components/news/CategoryFilter';
-import { NewsGrid } from '@/components/news/NewsGrid';
+import NewsCard from '@/components/NewsCard';
+import NewsSearch from '@/components/news/NewsSearch';
+import CategoryFilter from '@/components/news/CategoryFilter';
+import NewsGrid from '@/components/news/NewsGrid';
 import { newsData } from '@/data/NewsData';
+
+// Define the structure of our news items
+interface NewsItem {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  source: string;
+  date: string;
+  url: string;
+  tags: string[];
+  summary: string; // Added missing properties
+  category: string; // Added missing properties
+}
 
 const News = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,11 +31,11 @@ const News = () => {
   
   // Extract unique categories from news data
   const categories: string[] = ['all', ...Array.from(
-    new Set(newsData.map(item => item.category))
+    new Set((newsData as NewsItem[]).map(item => item.category))
   )];
   
   // Filter news based on search query and selected category
-  const filteredNews = newsData.filter(item => {
+  const filteredNews = (newsData as NewsItem[]).filter(item => {
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          item.summary.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
@@ -43,13 +57,13 @@ const News = () => {
             
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
-                <NewsSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                <NewsSearch searchTerm={searchQuery} setSearchTerm={setSearchQuery} />
               </div>
               <div>
                 <CategoryFilter 
-                  categories={categories}
                   selectedCategory={selectedCategory}
                   setSelectedCategory={setSelectedCategory}
+                  uniqueTags={categories}
                 />
               </div>
             </div>
@@ -59,7 +73,7 @@ const News = () => {
         {/* News Content */}
         <div className="container mx-auto max-w-6xl py-12 px-4">
           {filteredNews.length > 0 ? (
-            <NewsGrid news={filteredNews} />
+            <NewsGrid filteredNews={filteredNews} isLoaded={true} />
           ) : (
             <div className="text-center py-12">
               <h3 className="text-xl font-semibold">No results found</h3>
