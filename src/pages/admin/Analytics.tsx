@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, CircularProgress, Paper, Grid as MuiGrid } from '@mui/material';
+import { Box, Typography, CircularProgress, Paper, Grid } from '@mui/material';
 import { getAnalytics } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,21 +31,21 @@ const AdminAnalytics: React.FC = () => {
     <Box>
       <Typography variant="h5" gutterBottom>Analytics</Typography>
       {loading ? <CircularProgress /> : stats ? (
-        <MuiGrid container spacing={2}>
-          <MuiGrid item xs={12} md={4}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={4}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6">Total Users</Typography>
               <Typography variant="h4">{stats.totalUsers}</Typography>
             </Paper>
-          </MuiGrid>
-          <MuiGrid item xs={12} md={4}>
+          </Grid>
+          <Grid item xs={12} md={4}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6">Active Users</Typography>
               <Typography variant="h4">{stats.activeUsers}</Typography>
             </Paper>
-          </MuiGrid>
+          </Grid>
           {/* Add more analytics cards/charts here */}
-        </MuiGrid>
+        </Grid>
       ) : (
         <Typography color="error">Failed to load analytics.</Typography>
       )}
