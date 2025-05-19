@@ -1,8 +1,10 @@
+import { Request, Response, NextFunction } from 'express';
+
 const ADMIN_EMAIL = 'jhason3rd@gmail.com';
 const ADMIN_PASSWORD = '88888888.Jay';
 
 // Simple session-based admin auth middleware
-module.exports = function adminAuth(req, res, next) {
+export default function adminAuth(req: Request, res: Response, next: NextFunction) {
   // For demonstration, check for basic auth header
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Basic ')) {
@@ -15,7 +17,7 @@ module.exports = function adminAuth(req, res, next) {
   const [email, password] = credentials.split(':');
 
   if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-    req.admin = { email };
+    (req as any).admin = { email };
     return next();
   }
 
