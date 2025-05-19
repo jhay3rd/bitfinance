@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatBubble from "@/components/ChatBubble";
@@ -9,8 +8,7 @@ import Overview from "@/components/dashboard/Overview";
 import InvestmentPlans from "@/components/dashboard/InvestmentPlans";
 import DepositOptions from "@/components/dashboard/DepositOptions";
 import WithdrawOptions from "@/components/dashboard/WithdrawOptions";
-import ProfileSection from "@/components/dashboard/ProfileSection";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   getTotalPortfolioValue,
   getAllocationData
@@ -26,6 +24,7 @@ import EmptyDashboardState from "@/components/dashboard/EmptyDashboardState";
 
 const Dashboard: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [isMounted, setIsMounted] = useState(false);
@@ -76,6 +75,15 @@ const Dashboard: React.FC = () => {
   // Check if this is a new portfolio with no assets
   const isEmptyPortfolio = portfolioAssets.length === 0;
 
+  // Handle profile tab click to navigate to profile page
+  const handleTabChange = (tab: string) => {
+    if (tab === "profile") {
+      navigate("/dashboard/profile");
+    } else {
+      setActiveTab(tab);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Dashboard header */}
@@ -83,13 +91,13 @@ const Dashboard: React.FC = () => {
 
       <div className="flex">
         {/* Sidebar */}
-        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Sidebar activeTab={activeTab} setActiveTab={handleTabChange} />
 
         {/* Main content */}
         <main className={`flex-1 md:ml-16 lg:ml-64 p-4 sm:p-6 pb-20 md:pb-6 transition-all duration-300 ease-in-out ${isMounted ? 'opacity-100' : 'opacity-0'}`}>
           <Tabs 
             value={activeTab} 
-            onValueChange={setActiveTab} 
+            onValueChange={handleTabChange} 
             className="w-full"
           >
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -222,18 +230,13 @@ const Dashboard: React.FC = () => {
               </div>
             </TabsContent>
 
-            <TabsContent 
-              value="profile" 
-              className="animate-in fade-in slide-in-from-right-8 duration-500"
-            >
-              <ProfileSection />
-            </TabsContent>
+            {/* Profile tab content will redirect to /dashboard/profile */}
           </Tabs>
         </main>
       </div>
 
       {/* Mobile navigation */}
-      <MobileNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      <MobileNavigation activeTab={activeTab} setActiveTab={handleTabChange} />
       
       <ChatBubble />
     </div>

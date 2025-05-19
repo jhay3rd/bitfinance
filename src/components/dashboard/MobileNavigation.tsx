@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   BarChart as BarChartIcon,
   LineChart as LineChartIcon,
@@ -15,12 +16,22 @@ interface MobileNavigationProps {
 }
 
 const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiveTab }) => {
+  const navigate = useNavigate();
+
+  const handleTabChange = (tab: string) => {
+    if (tab === "profile") {
+      navigate("/dashboard/profile");
+    } else {
+      setActiveTab(tab);
+    }
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t bg-white dark:bg-gray-900 md:hidden shadow-lg z-20">
       <div className="grid grid-cols-5 h-16">
         <Button 
           variant="ghost" 
-          onClick={() => setActiveTab("overview")}
+          onClick={() => handleTabChange("overview")}
           className={`flex flex-col items-center justify-center rounded-none h-full ${
             activeTab === "overview" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
           }`}
@@ -30,7 +41,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
         </Button>
         <Button 
           variant="ghost"
-          onClick={() => setActiveTab("portfolio")}
+          onClick={() => handleTabChange("portfolio")}
           className={`flex flex-col items-center justify-center rounded-none h-full ${
             activeTab === "portfolio" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
           }`}
@@ -40,7 +51,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
         </Button>
         <Button 
           variant="ghost"
-          onClick={() => setActiveTab("deposit")}
+          onClick={() => handleTabChange("deposit")}
           className={`flex flex-col items-center justify-center rounded-none h-full ${
             activeTab === "deposit" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
           }`}
@@ -50,7 +61,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
         </Button>
         <Button 
           variant="ghost"
-          onClick={() => setActiveTab("withdraw")}
+          onClick={() => handleTabChange("withdraw")}
           className={`flex flex-col items-center justify-center rounded-none h-full ${
             activeTab === "withdraw" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
           }`}
@@ -60,7 +71,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
         </Button>
         <Button 
           variant="ghost"
-          onClick={() => setActiveTab("profile")}
+          onClick={() => handleTabChange("profile")}
           className={`flex flex-col items-center justify-center rounded-none h-full ${
             activeTab === "profile" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
           }`}

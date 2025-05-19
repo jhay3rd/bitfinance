@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import Index from "./pages/Index";
@@ -20,6 +21,7 @@ import PlansPage from "./pages/dashboard/PlansPage";
 import SettingsPage from "./pages/dashboard/SettingsPage";
 import SupportPage from "./pages/dashboard/SupportPage";
 import TransactionsPage from "./pages/dashboard/TransactionsPage";
+import ProfilePage from "./pages/dashboard/ProfilePage";
 import DepositRedirect from "./pages/dashboard/DepositRedirect";
 import DepositConfirm from "./pages/dashboard/DepositConfirm";
 import WithdrawConfirm from "./pages/dashboard/WithdrawConfirm";
@@ -41,6 +43,7 @@ const AppRoutes = () => (
       <Route path="/dashboard/invest/:planId" element={<PrivateRoute><InvestmentPlan /></PrivateRoute>} />
       <Route path="/dashboard/plans" element={<PrivateRoute><PlansPage /></PrivateRoute>} />
       <Route path="/dashboard/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
+      <Route path="/dashboard/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
       <Route path="/dashboard/support" element={<PrivateRoute><SupportPage /></PrivateRoute>} />
       <Route path="/dashboard/transactions" element={<PrivateRoute><TransactionsPage /></PrivateRoute>} />
       <Route path="/dashboard/deposit" element={<PrivateRoute><DepositRedirect /></PrivateRoute>} />
