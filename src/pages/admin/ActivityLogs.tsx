@@ -16,8 +16,14 @@ const columns: GridColDef[] = [
   { field: 'id', headerName: 'Log ID', width: 220 },
   { field: 'userId', headerName: 'User ID', width: 180 },
   { field: 'action', headerName: 'Action', width: 200 },
-  { field: 'timestamp', headerName: 'Timestamp', width: 180, type: 'dateTime',
-    valueGetter: (params) => params.value ? new Date(params.value as string) : null 
+  { 
+    field: 'timestamp', 
+    headerName: 'Timestamp', 
+    width: 180, 
+    type: 'dateTime',
+    valueGetter: (params) => {
+      return params.row.timestamp ? new Date(params.row.timestamp) : null;
+    }
   },
   // Add more fields as needed
 ];
