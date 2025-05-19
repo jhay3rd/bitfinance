@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, CircularProgress, Grid as MuiGrid, Paper } from '@mui/material';
+import { Box, Typography, CircularProgress, Paper, Grid as MuiGrid } from '@mui/material';
 import { getAnalytics } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 
