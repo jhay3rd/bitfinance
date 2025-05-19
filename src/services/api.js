@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -38,7 +39,18 @@ export const getPortfolio = () => api.get('/portfolio');
 export const updatePortfolio = (data) => api.post('/portfolio', data);
 
 // Admin: Activity logs & analytics
-export const getActivityLogs = (params) => api.get('/admin/activity-logs', { params });
+export const getActivityLogs = (params) => {
+  const adminAuth = localStorage.getItem('adminAuth');
+  if (!adminAuth) {
+    return Promise.reject(new Error('No admin authentication'));
+  }
+  
+  return api.get('/admin/activity-logs', { 
+    params,
+    headers: { 'Authorization': `Basic ${adminAuth}` }
+  });
+};
+
 export const getAnalytics = () => api.get('/admin/analytics');
 
 // Error handling can be added globally or per call

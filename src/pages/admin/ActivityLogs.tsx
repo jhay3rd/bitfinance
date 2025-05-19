@@ -21,9 +21,10 @@ const columns: GridColDef[] = [
     headerName: 'Timestamp', 
     width: 180, 
     type: 'dateTime',
-    valueFormatter: (params: { value: any }) => {
-      if (params.value) {
-        return new Date(String(params.value));
+    valueFormatter: (params) => {
+      const value = params.value;
+      if (value) {
+        return new Date(String(value));
       }
       return null;
     }

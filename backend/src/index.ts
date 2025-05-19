@@ -20,12 +20,14 @@ app.use(express.json());
 
 // In-memory user store (for demo)
 const users: Record<string, any> = {};
+const activityLogs: any[] = [];
 
 // Augment Express Request type for req.user
 declare global {
   namespace Express {
     interface Request {
       user?: any;
+      admin?: any;
     }
   }
 }
@@ -33,6 +35,42 @@ declare global {
 // Health check endpoint
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', message: 'Backend is running.' });
+});
+
+// Admin routes imports
+import adminAuth from './middleware/adminAuth';
+
+// Admin routes
+app.get('/api/admin/users', adminAuth, (req: Request, res: Response) => {
+  const usersList = Object.values(users);
+  res.json({ users: usersList });
+});
+
+app.put('/api/admin/users/:userId/investment-balance', adminAuth, (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const { investmentBalance } = req.body;
+  
+  if (!users[userId]) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+  
+  users[userId].investmentBalance = investmentBalance;
+  
+  // Add activity log
+  const log = {
+    id: `log_${Date.now()}`,
+    userId,
+    action: `Updated investment balance to ${investmentBalance}`,
+    timestamp: new Date().toISOString(),
+    adminId: req.admin?.email
+  };
+  activityLogs.push(log);
+  
+  res.json({ success: true, user: users[userId] });
+});
+
+app.get('/api/admin/activity-logs', adminAuth, (req: Request, res: Response) => {
+  res.json({ logs: activityLogs });
 });
 
 // Google OAuth endpoint
@@ -47,7 +85,18 @@ app.post('/api/auth/google', async (req: Request, res: Response): Promise<void> 
     const googleRes = await axios.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`);
     const { email, name, sub, picture } = googleRes.data;
     // Create or update user
-    users[email] = { email, name, sub, picture, provider: 'google' };
+    users[email] = { 
+      id: sub || `user_${Date.now()}`,
+      email, 
+      fullName: name, 
+      sub, 
+      picture, 
+      provider: 'google',
+      verified: true,
+      role: 'user',
+      investmentBalance: 0,
+      createdAt: users[email]?.createdAt || new Date().toISOString()
+    };
     // Issue JWT
     const jwtToken = jwt.sign({ email, name, provider: 'google' }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token: jwtToken, user: users[email] });
@@ -80,7 +129,17 @@ app.post('/api/auth/apple', async (req: Request, res: Response): Promise<void> =
     const { email, sub } = payload;
     // Create or update user
     const userKey: string = email || sub || `apple_${Date.now()}`;
-    users[userKey] = { email, sub, provider: 'apple' };
+    users[userKey] = { 
+      id: sub || `user_${Date.now()}`,
+      email: email || `${userKey}@example.com`, 
+      fullName: payload.name || 'Apple User',
+      sub, 
+      provider: 'apple',
+      verified: true,
+      role: 'user',
+      investmentBalance: 0,
+      createdAt: users[userKey]?.createdAt || new Date().toISOString()
+    };
     // Issue JWT
     const jwtToken = jwt.sign({ email, sub, provider: 'apple' }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token: jwtToken, user: users[userKey] });
@@ -112,6 +171,12 @@ app.get('/api/protected', authenticateJWT, (req: Request, res: Response) => {
   res.json({ message: 'You are authenticated!', user: req.user });
 });
 
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ message: 'Internal server error' });
+});
+
 app.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
-}); 
+});

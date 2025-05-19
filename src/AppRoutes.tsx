@@ -36,9 +36,22 @@ const AppRoutes = () => (
   <AuthProvider>
     <AdminAuthProvider>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/markets" element={<Markets />} />
+        <Route path="/news" element={<News />} />
+        <Route path="/features" element={<Features />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/career" element={<Careers />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/cookies" element={<Cookies />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         
         {/* Protected Dashboard Routes */}
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
@@ -56,20 +69,7 @@ const AppRoutes = () => (
         {/* Admin Routes */}
         <Route path="/admin/*" element={<AdminRoutes />} />
         
-        {/* Public Routes */}
-        <Route path="/markets" element={<Markets />} />
-        <Route path="/news" element={<News />} />
-        <Route path="/features" element={<Features />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/career" element={<Careers />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/cookies" element={<Cookies />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        {/* Catch-all route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AdminAuthProvider>
