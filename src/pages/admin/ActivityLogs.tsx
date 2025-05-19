@@ -1,26 +1,36 @@
+
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 import { getActivityLogs } from '../../services/api';
 
-const columns = [
+interface ActivityLog {
+  id: string;
+  userId: string;
+  action: string;
+  timestamp: string;
+}
+
+const columns: GridColDef[] = [
   { field: 'id', headerName: 'Log ID', width: 220 },
   { field: 'userId', headerName: 'User ID', width: 180 },
   { field: 'action', headerName: 'Action', width: 200 },
-  { field: 'timestamp', headerName: 'Timestamp', width: 180 },
+  { field: 'timestamp', headerName: 'Timestamp', width: 180, type: 'dateTime',
+    valueGetter: (params) => params.value ? new Date(params.value as string) : null 
+  },
   // Add more fields as needed
 ];
 
-const AdminActivityLogs = () => {
-  const [logs, setLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
+const AdminActivityLogs: React.FC = () => {
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const adminAuth = localStorage.getItem('adminAuth');
     if (!adminAuth) {
-      navigate('/admin/Login');
+      navigate('/admin/login');
       return;
     }
     getActivityLogs()
@@ -38,7 +48,11 @@ const AdminActivityLogs = () => {
           rows={logs}
           columns={columns}
           autoHeight
-          pageSize={10}
+          pageSizeOptions={[10, 25, 50]}
+          initialState={{ 
+            pagination: { paginationModel: { pageSize: 10 } },
+            sorting: { sortModel: [{ field: 'timestamp', sort: 'desc' }] } 
+          }}
           getRowId={row => row.id}
         />
       )}
@@ -46,4 +60,4 @@ const AdminActivityLogs = () => {
   );
 };
 
-export default AdminActivityLogs; 
+export default AdminActivityLogs;
