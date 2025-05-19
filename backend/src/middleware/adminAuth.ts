@@ -1,7 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
 
-const ADMIN_EMAIL = 'jhason3rd@gmail.com';
-const ADMIN_PASSWORD = '88888888.Jay';
+import { Request, Response, NextFunction } from 'express';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// Get admin credentials from environment variables or use default for development only
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
 // Simple session-based admin auth middleware
 export default function adminAuth(req: Request, res: Response, next: NextFunction) {

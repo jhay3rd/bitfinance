@@ -1,6 +1,7 @@
+
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridValueFormatterParams } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 import { getActivityLogs } from '../../services/api';
 
@@ -20,9 +21,12 @@ const columns: GridColDef[] = [
     headerName: 'Timestamp', 
     width: 180, 
     type: 'dateTime',
-    valueFormatter: (params) => {
-      // Use proper typing to avoid the 'never' type error
-      return params.value ? new Date(String(params.value)) : null;
+    valueFormatter: (params: GridValueFormatterParams) => {
+      // Properly type the params to avoid 'never' type error
+      if (params.value) {
+        return new Date(String(params.value));
+      }
+      return null;
     }
   },
   // Add more fields as needed
