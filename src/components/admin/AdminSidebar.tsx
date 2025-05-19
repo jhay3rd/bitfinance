@@ -1,18 +1,23 @@
+
 import React from 'react';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Badge } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import MailIcon from '@mui/icons-material/Mail';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import Badge from '@mui/material/Badge';
 import { Link } from 'react-router-dom';
 
 const drawerWidth = 220;
 
+interface AdminSidebarProps {
+  supportBadge?: number;
+  transactionsBadge?: number;
+}
+
 const navItems = [
-  { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
+  { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin/dashboard' },
   { text: 'Users', icon: <PeopleIcon />, path: '/admin/users' },
   { text: 'Activity Logs', icon: <ListAltIcon />, path: '/admin/activity-logs' },
   { text: 'Analytics', icon: <BarChartIcon />, path: '/admin/analytics' },
@@ -20,7 +25,7 @@ const navItems = [
   { text: 'Transactions', icon: <MonetizationOnIcon />, path: '/admin/transactions', badge: 'transactions' },
 ];
 
-const AdminSidebar = ({ supportBadge = 0, transactionsBadge = 0 }) => (
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ supportBadge = 0, transactionsBadge = 0 }) => (
   <Drawer
     variant="permanent"
     sx={{
@@ -29,7 +34,7 @@ const AdminSidebar = ({ supportBadge = 0, transactionsBadge = 0 }) => (
       [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
     }}
   >
-    <List>
+    <List sx={{ marginTop: '64px' }}>
       {navItems.map((item) => (
         <ListItem button key={item.text} component={Link} to={item.path}>
           <ListItemIcon>
@@ -46,4 +51,4 @@ const AdminSidebar = ({ supportBadge = 0, transactionsBadge = 0 }) => (
   </Drawer>
 );
 
-export default AdminSidebar; 
+export default AdminSidebar;

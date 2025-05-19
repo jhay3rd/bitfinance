@@ -1,7 +1,7 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const ADMIN_DASHBOARD_PATH = '/admin/Dashboard';
+import useAdminAuth from '@/hooks/useAdminAuth';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -9,21 +9,17 @@ const AdminLogin: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAdminAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    
     try {
-      const credentials = btoa(`${email}:${password}`);
-      const res = await fetch('/api/admin/users', {
-        headers: {
-          'Authorization': `Basic ${credentials}`,
-        },
-      });
-      if (res.ok) {
-        localStorage.setItem('adminAuth', credentials);
-        navigate(ADMIN_DASHBOARD_PATH);
+      const success = await login(email, password);
+      if (success) {
+        navigate('/admin/dashboard');
       } else {
         setError('Invalid admin credentials');
       }
@@ -67,4 +63,4 @@ const AdminLogin: React.FC = () => {
   );
 };
 
-export default AdminLogin; 
+export default AdminLogin;
