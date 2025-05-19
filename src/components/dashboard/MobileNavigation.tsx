@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   BarChart as BarChartIcon,
   LineChart as LineChartIcon,
@@ -17,6 +17,7 @@ interface MobileNavigationProps {
 
 const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiveTab }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleTabChange = (tab: string) => {
     if (tab === "profile") {
@@ -25,6 +26,9 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
       setActiveTab(tab);
     }
   };
+
+  // Determine if we're on the profile page
+  const isProfilePage = location.pathname === "/dashboard/profile";
 
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t bg-white dark:bg-gray-900 md:hidden shadow-lg z-20">
@@ -73,7 +77,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
           variant="ghost"
           onClick={() => handleTabChange("profile")}
           className={`flex flex-col items-center justify-center rounded-none h-full ${
-            activeTab === "profile" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
+            isProfilePage || activeTab === "profile" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
           }`}
         >
           <User className="h-5 w-5" />
