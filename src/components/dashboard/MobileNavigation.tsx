@@ -24,6 +24,9 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
       navigate("/dashboard/profile");
     } else {
       setActiveTab(tab);
+      if (location.pathname === "/dashboard/profile") {
+        navigate("/dashboard"); // Return to dashboard if we're on profile
+      }
     }
   };
 
@@ -37,7 +40,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
           variant="ghost" 
           onClick={() => handleTabChange("overview")}
           className={`flex flex-col items-center justify-center rounded-none h-full ${
-            activeTab === "overview" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
+            activeTab === "overview" && !isProfilePage ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
           }`}
         >
           <BarChartIcon className="h-5 w-5" />
@@ -47,7 +50,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
           variant="ghost"
           onClick={() => handleTabChange("portfolio")}
           className={`flex flex-col items-center justify-center rounded-none h-full ${
-            activeTab === "portfolio" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
+            activeTab === "portfolio" && !isProfilePage ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
           }`}
         >
           <LineChartIcon className="h-5 w-5" />
@@ -57,7 +60,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
           variant="ghost"
           onClick={() => handleTabChange("deposit")}
           className={`flex flex-col items-center justify-center rounded-none h-full ${
-            activeTab === "deposit" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
+            activeTab === "deposit" && !isProfilePage ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
           }`}
         >
           <Wallet className="h-5 w-5" />
@@ -67,7 +70,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
           variant="ghost"
           onClick={() => handleTabChange("withdraw")}
           className={`flex flex-col items-center justify-center rounded-none h-full ${
-            activeTab === "withdraw" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
+            activeTab === "withdraw" && !isProfilePage ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
           }`}
         >
           <CreditCard className="h-5 w-5" />
@@ -77,7 +80,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, setActiv
           variant="ghost"
           onClick={() => handleTabChange("profile")}
           className={`flex flex-col items-center justify-center rounded-none h-full ${
-            isProfilePage || activeTab === "profile" ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
+            isProfilePage ? "bg-primary/10 text-primary border-t-2 border-primary" : ""
           }`}
         >
           <User className="h-5 w-5" />
