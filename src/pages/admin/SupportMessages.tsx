@@ -1,18 +1,28 @@
+
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress, Button, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-const AdminSupportMessages = () => {
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [responding, setResponding] = useState({});
-  const [responseText, setResponseText] = useState({});
+interface SupportMessage {
+  id: string;
+  userId?: string;
+  email?: string;
+  message: string;
+  response?: string;
+  status: 'open' | 'responded' | 'closed';
+}
+
+const AdminSupportMessages: React.FC = () => {
+  const [messages, setMessages] = useState<SupportMessage[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [responding, setResponding] = useState<Record<string, boolean>>({});
+  const [responseText, setResponseText] = useState<Record<string, string>>({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const adminAuth = localStorage.getItem('adminAuth');
     if (!adminAuth) {
-      navigate('/admin/Login');
+      navigate('/admin/login');
       return;
     }
     fetch('/api/admin/support-messages', {
@@ -20,31 +30,41 @@ const AdminSupportMessages = () => {
     })
       .then(res => res.json())
       .then(data => setMessages(data.messages || []))
+      .catch(err => console.error('Error fetching support messages:', err))
       .finally(() => setLoading(false));
   }, [navigate]);
 
-  const handleRespond = async (id) => {
+  const handleRespond = async (id: string) => {
     const adminAuth = localStorage.getItem('adminAuth');
     setResponding(r => ({ ...r, [id]: true }));
-    await fetch(`/api/admin/support-messages/${id}/respond`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${adminAuth}`,
-      },
-      body: JSON.stringify({ response: responseText[id] }),
-    });
-    setResponding(r => ({ ...r, [id]: false }));
-    window.location.reload();
+    try {
+      await fetch(`/api/admin/support-messages/${id}/respond`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${adminAuth}`,
+        },
+        body: JSON.stringify({ response: responseText[id] }),
+      });
+      setResponding(r => ({ ...r, [id]: false }));
+      window.location.reload();
+    } catch (err) {
+      console.error('Error responding to message:', err);
+      setResponding(r => ({ ...r, [id]: false }));
+    }
   };
 
-  const handleClose = async (id) => {
+  const handleClose = async (id: string) => {
     const adminAuth = localStorage.getItem('adminAuth');
-    await fetch(`/api/admin/support-messages/${id}/close`, {
-      method: 'PUT',
-      headers: { 'Authorization': `Basic ${adminAuth}` },
-    });
-    window.location.reload();
+    try {
+      await fetch(`/api/admin/support-messages/${id}/close`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Basic ${adminAuth}` },
+      });
+      window.location.reload();
+    } catch (err) {
+      console.error('Error closing message:', err);
+    }
   };
 
   return (
@@ -93,4 +113,4 @@ const AdminSupportMessages = () => {
   );
 };
 
-export default AdminSupportMessages; 
+export default AdminSupportMessages;
