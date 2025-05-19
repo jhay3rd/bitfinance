@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
@@ -70,7 +71,7 @@ const AdminUsers: React.FC = () => {
       headerName: 'Registered', 
       width: 180, 
       type: 'dateTime',
-      valueFormatter: (params) => {
+      valueFormatter: (params: { value: any }) => {
         if (params.value) {
           return new Date(String(params.value));
         }
