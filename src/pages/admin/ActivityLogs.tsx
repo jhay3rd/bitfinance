@@ -22,9 +22,8 @@ const columns: GridColDef[] = [
     width: 180, 
     type: 'dateTime',
     valueFormatter: (params) => {
-      const value = params.value;
-      if (value) {
-        return new Date(String(value));
+      if (params.value) {
+        return new Date(String(params.value));
       }
       return null;
     }

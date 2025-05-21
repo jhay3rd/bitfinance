@@ -49,7 +49,7 @@ const AdminUsers: React.FC = () => {
       width: 160, 
       type: 'number',
       renderCell: (params) => {
-        const [newBalance, setNewBalance] = React.useState<number>(params.value as number);
+        const [newBalance, setNewBalance] = React.useState<number>(params.row.investmentBalance);
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <input
@@ -72,9 +72,8 @@ const AdminUsers: React.FC = () => {
       width: 180, 
       type: 'dateTime',
       valueFormatter: (params) => {
-        const value = params.value;
-        if (value) {
-          return new Date(String(value));
+        if (params.value) {
+          return new Date(String(params.value));
         }
         return null;
       }
