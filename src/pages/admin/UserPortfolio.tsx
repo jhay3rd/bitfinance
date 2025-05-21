@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, CircularProgress, Paper, Grid, Button, TextField, Slider, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, Typography, CircularProgress, Paper, Button, TextField, Slider, FormControl, InputLabel, Select, MenuItem, Grid } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getUser, updateUserPortfolio } from '../../services/api';
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +24,11 @@ interface User {
   fullName: string;
   email: string;
   investmentBalance: number;
+}
+
+interface UserResponse {
+  user: User;
+  portfolio?: UserPortfolio;
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
@@ -53,28 +58,32 @@ const UserPortfolio: React.FC = () => {
       setLoading(true);
       try {
         const response = await getUser(userId);
-        setUser(response.data.user);
+        const userData: UserResponse = response.data;
         
-        // If portfolio data exists in the response
-        if (response.data.portfolio) {
-          setPortfolio(response.data.portfolio);
+        if (userData.user) {
+          setUser(userData.user);
           
-          // Initialize allocations state
-          const initialAllocations: Record<string, number> = {};
-          Object.entries(response.data.portfolio.assets).forEach(([asset, data]: [string, any]) => {
-            initialAllocations[asset] = data.allocation;
-          });
-          setAllocations(initialAllocations);
-        } else {
-          // Create empty portfolio if none exists
-          const emptyPortfolio: UserPortfolio = {
-            id: `portfolio_${userId}`,
-            userId: userId,
-            assets: {},
-            totalValue: 0,
-            lastUpdated: new Date().toISOString()
-          };
-          setPortfolio(emptyPortfolio);
+          // If portfolio data exists in the response
+          if (userData.portfolio) {
+            setPortfolio(userData.portfolio);
+            
+            // Initialize allocations state
+            const initialAllocations: Record<string, number> = {};
+            Object.entries(userData.portfolio.assets).forEach(([asset, data]: [string, any]) => {
+              initialAllocations[asset] = data.allocation;
+            });
+            setAllocations(initialAllocations);
+          } else {
+            // Create empty portfolio if none exists
+            const emptyPortfolio: UserPortfolio = {
+              id: `portfolio_${userId}`,
+              userId: userId,
+              assets: {},
+              totalValue: 0,
+              lastUpdated: new Date().toISOString()
+            };
+            setPortfolio(emptyPortfolio);
+          }
         }
       } catch (error) {
         toast({
@@ -116,7 +125,7 @@ const UserPortfolio: React.FC = () => {
   };
 
   const handleSavePortfolio = async () => {
-    if (!portfolio || !userId) return;
+    if (!portfolio || !userId || !user) return;
     
     // Check if allocations sum to 100
     const allocationSum = Object.values(allocations).reduce((sum, val) => sum + val, 0);
@@ -132,7 +141,7 @@ const UserPortfolio: React.FC = () => {
     setSaving(true);
     try {
       // Calculate asset values based on allocation percentages and total investment balance
-      const totalValue = user?.investmentBalance || 0;
+      const totalValue = user.investmentBalance || 0;
       const assets: Record<string, { allocation: number; value: number }> = {};
       
       Object.entries(allocations).forEach(([asset, allocation]) => {
