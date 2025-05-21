@@ -130,7 +130,7 @@ const AdminAnalytics: React.FC = () => {
       
       {/* Summary Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom>Total Users</Typography>
@@ -141,7 +141,7 @@ const AdminAnalytics: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom>Active Users</Typography>
@@ -152,7 +152,7 @@ const AdminAnalytics: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom>Total Deposits</Typography>
@@ -160,7 +160,7 @@ const AdminAnalytics: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom>Pending Transactions</Typography>
@@ -173,7 +173,7 @@ const AdminAnalytics: React.FC = () => {
       {/* Charts */}
       <Grid container spacing={3}>
         {/* User Growth Chart */}
-        <Grid item xs={12} md={8}>
+        <Grid xs={12} md={8}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>User Growth</Typography>
             <Box sx={{ height: 300 }}>
@@ -195,7 +195,7 @@ const AdminAnalytics: React.FC = () => {
         </Grid>
         
         {/* User Distribution */}
-        <Grid item xs={12} md={4}>
+        <Grid xs={12} md={4}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>User Distribution</Typography>
             <Box sx={{ height: 300, display: 'flex', justifyContent: 'center' }}>
@@ -225,7 +225,7 @@ const AdminAnalytics: React.FC = () => {
         </Grid>
         
         {/* Activity By Day */}
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>Daily Activity</Typography>
             <Box sx={{ height: 300 }}>

@@ -1,5 +1,7 @@
+
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, CircularProgress, Paper, Button, TextField, Slider, FormControl, InputLabel, Select, MenuItem, Grid } from '@mui/material';
+import { Box, Typography, CircularProgress, Paper, Button, TextField, Slider, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getUser, updateUserPortfolio } from '../../services/api';
 import { useToast } from "@/hooks/use-toast";
@@ -212,15 +214,15 @@ const UserPortfolio: React.FC = () => {
         <Typography variant="subtitle1">User Info</Typography>
         <Paper sx={{ p: 2 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
+            <Grid xs={12} sm={4}>
               <Typography variant="body2" color="textSecondary">Email</Typography>
               <Typography variant="body1">{user.email}</Typography>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid xs={12} sm={4}>
               <Typography variant="body2" color="textSecondary">User ID</Typography>
               <Typography variant="body1">{user.id}</Typography>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid xs={12} sm={4}>
               <Typography variant="body2" color="textSecondary">Investment Balance</Typography>
               <Typography variant="body1">${user.investmentBalance.toLocaleString()}</Typography>
             </Grid>
@@ -229,7 +231,7 @@ const UserPortfolio: React.FC = () => {
       </Box>
       
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+        <Grid xs={12} md={8}>
           <Typography variant="subtitle1">Asset Allocations</Typography>
           <Paper sx={{ p: 2 }}>
             {Object.keys(allocations).length === 0 ? (
@@ -303,7 +305,7 @@ const UserPortfolio: React.FC = () => {
           </Paper>
         </Grid>
         
-        <Grid item xs={12} md={4}>
+        <Grid xs={12} md={4}>
           <Typography variant="subtitle1">Portfolio Visualization</Typography>
           <Paper sx={{ p: 2, height: 300 }}>
             {chartData.length > 0 ? (
