@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
@@ -20,7 +21,7 @@ const columns: GridColDef[] = [
     headerName: 'Timestamp', 
     width: 180, 
     type: 'dateTime',
-    valueFormatter: (params) => {
+    valueFormatter: (params: any) => {
       if (params.value) {
         return new Date(params.value);
       }

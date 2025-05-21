@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -47,7 +48,7 @@ const AdminUsers: React.FC = () => {
       headerName: 'Investment Balance', 
       width: 160, 
       type: 'number',
-      renderCell: (params: GridRenderCellParams<any, User>) => {
+      renderCell: (params: GridRenderCellParams) => {
         const [newBalance, setNewBalance] = React.useState<number>(params.row.investmentBalance);
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -70,7 +71,7 @@ const AdminUsers: React.FC = () => {
       headerName: 'Registered', 
       width: 180, 
       type: 'dateTime',
-      valueFormatter: (params) => {
+      valueFormatter: (params: any) => {
         if (params.value) {
           return new Date(params.value);
         }
