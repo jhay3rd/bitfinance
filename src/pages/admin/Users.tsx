@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams, GridValueFormatterParams } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 
 interface User {
@@ -71,7 +71,7 @@ const AdminUsers: React.FC = () => {
       headerName: 'Registered', 
       width: 180, 
       type: 'dateTime',
-      valueFormatter: (params) => {
+      valueFormatter: (params: GridValueFormatterParams) => {
         if (params.value) {
           return new Date(params.value as string);
         }
