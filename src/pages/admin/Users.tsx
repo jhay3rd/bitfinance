@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
-import { DataGrid, GridColDef, GridValueFormatterParams, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 
 interface User {
@@ -48,7 +48,7 @@ const AdminUsers: React.FC = () => {
       headerName: 'Investment Balance', 
       width: 160, 
       type: 'number',
-      renderCell: (params: GridRenderCellParams<number, User>) => {
+      renderCell: (params: GridRenderCellParams<any, User>) => {
         const [newBalance, setNewBalance] = React.useState<number>(params.row.investmentBalance);
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -71,9 +71,9 @@ const AdminUsers: React.FC = () => {
       headerName: 'Registered', 
       width: 180, 
       type: 'dateTime',
-      valueFormatter: (params: GridValueFormatterParams<string>) => {
+      valueFormatter: (params) => {
         if (params.value) {
-          return new Date(params.value);
+          return new Date(params.value as string);
         }
         return null;
       }
