@@ -51,7 +51,51 @@ export const getActivityLogs = (params) => {
   });
 };
 
-export const getAnalytics = () => api.get('/admin/analytics');
+export const getAnalytics = () => {
+  const adminAuth = localStorage.getItem('adminAuth');
+  if (!adminAuth) {
+    return Promise.reject(new Error('No admin authentication'));
+  }
+  
+  return api.get('/admin/analytics', {
+    headers: { 'Authorization': `Basic ${adminAuth}` }
+  });
+};
+
+// Admin: Chatbot management
+export const getChatbotMessages = () => {
+  const adminAuth = localStorage.getItem('adminAuth');
+  if (!adminAuth) {
+    return Promise.reject(new Error('No admin authentication'));
+  }
+  
+  return api.get('/admin/chatbot-messages', {
+    headers: { 'Authorization': `Basic ${adminAuth}` }
+  });
+};
+
+export const respondToChatMessage = (messageId, response) => {
+  const adminAuth = localStorage.getItem('adminAuth');
+  if (!adminAuth) {
+    return Promise.reject(new Error('No admin authentication'));
+  }
+  
+  return api.post(`/admin/chatbot-messages/${messageId}/respond`, { response }, {
+    headers: { 'Authorization': `Basic ${adminAuth}` }
+  });
+};
+
+// User portfolio management (admin)
+export const updateUserPortfolio = (userId, portfolioData) => {
+  const adminAuth = localStorage.getItem('adminAuth');
+  if (!adminAuth) {
+    return Promise.reject(new Error('No admin authentication'));
+  }
+  
+  return api.put(`/admin/users/${userId}/portfolio`, portfolioData, {
+    headers: { 'Authorization': `Basic ${adminAuth}` }
+  });
+};
 
 // Error handling can be added globally or per call
-export default api; 
+export default api;
