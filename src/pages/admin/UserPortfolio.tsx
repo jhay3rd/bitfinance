@@ -1,20 +1,21 @@
-
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress, Paper, Button, TextField, Slider, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getUser, updateUserPortfolio } from '../../services/api';
 import { useToast } from "@/hooks/use-toast";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
-interface UserPortfolio {
+// Define interfaces for the component
+interface Asset {
+  allocation: number;
+  value: number;
+}
+
+interface UserPortfolioData {
   id: string;
   userId: string;
   assets: {
-    [key: string]: {
-      allocation: number;
-      value: number;
-    }
+    [key: string]: Asset;
   };
   totalValue: number;
   lastUpdated: string;
@@ -29,7 +30,7 @@ interface User {
 
 interface UserResponse {
   user: User;
-  portfolio?: UserPortfolio;
+  portfolio?: UserPortfolioData;
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
@@ -39,7 +40,7 @@ const UserPortfolio: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const [portfolio, setPortfolio] = useState<UserPortfolio | null>(null);
+  const [portfolio, setPortfolio] = useState<UserPortfolioData | null>(null);
   const [allocations, setAllocations] = useState<Record<string, number>>({});
   const [newAsset, setNewAsset] = useState('');
   const [saving, setSaving] = useState(false);
@@ -76,7 +77,7 @@ const UserPortfolio: React.FC = () => {
             setAllocations(initialAllocations);
           } else {
             // Create empty portfolio if none exists
-            const emptyPortfolio: UserPortfolio = {
+            const emptyPortfolio: UserPortfolioData = {
               id: `portfolio_${userId}`,
               userId: userId,
               assets: {},
@@ -153,7 +154,7 @@ const UserPortfolio: React.FC = () => {
         };
       });
       
-      const updatedPortfolio: UserPortfolio = {
+      const updatedPortfolio: UserPortfolioData = {
         ...portfolio,
         assets,
         totalValue,
@@ -213,25 +214,25 @@ const UserPortfolio: React.FC = () => {
       <Box sx={{ mb: 3 }}>
         <Typography variant="subtitle1">User Info</Typography>
         <Paper sx={{ p: 2 }}>
-          <Grid container spacing={2}>
-            <Grid xs={12} sm={4}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+            <Box sx={{ flex: '1 1 30%', minWidth: 200 }}>
               <Typography variant="body2" color="textSecondary">Email</Typography>
               <Typography variant="body1">{user.email}</Typography>
-            </Grid>
-            <Grid xs={12} sm={4}>
+            </Box>
+            <Box sx={{ flex: '1 1 30%', minWidth: 200 }}>
               <Typography variant="body2" color="textSecondary">User ID</Typography>
               <Typography variant="body1">{user.id}</Typography>
-            </Grid>
-            <Grid xs={12} sm={4}>
+            </Box>
+            <Box sx={{ flex: '1 1 30%', minWidth: 200 }}>
               <Typography variant="body2" color="textSecondary">Investment Balance</Typography>
               <Typography variant="body1">${user.investmentBalance.toLocaleString()}</Typography>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </Paper>
       </Box>
       
-      <Grid container spacing={3}>
-        <Grid xs={12} md={8}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
+        <Box sx={{ flex: '1 1 66%' }}>
           <Typography variant="subtitle1">Asset Allocations</Typography>
           <Paper sx={{ p: 2 }}>
             {Object.keys(allocations).length === 0 ? (
@@ -303,9 +304,9 @@ const UserPortfolio: React.FC = () => {
               </Button>
             </Box>
           </Paper>
-        </Grid>
+        </Box>
         
-        <Grid xs={12} md={4}>
+        <Box sx={{ flex: '1 1 33%' }}>
           <Typography variant="subtitle1">Portfolio Visualization</Typography>
           <Paper sx={{ p: 2, height: 300 }}>
             {chartData.length > 0 ? (
@@ -335,10 +336,89 @@ const UserPortfolio: React.FC = () => {
               </Box>
             )}
           </Paper>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Box>
   );
+};
+
+// I need to restore the missing handler functions
+UserPortfolio.prototype.handleAllocationChange = function(asset: string, newValue: number) {
+  this.setAllocations(prev => ({
+    ...prev,
+    [asset]: newValue
+  }));
+};
+
+UserPortfolio.prototype.handleAddAsset = function() {
+  if (!this.newAsset || this.allocations[this.newAsset] !== undefined) {
+    return;
+  }
+  
+  this.setAllocations(prev => ({
+    ...prev,
+    [this.newAsset]: 0
+  }));
+  this.setNewAsset('');
+};
+
+UserPortfolio.prototype.handleRemoveAsset = function(asset: string) {
+  const newAllocations = { ...this.allocations };
+  delete newAllocations[asset];
+  this.setAllocations(newAllocations);
+};
+
+UserPortfolio.prototype.handleSavePortfolio = async function() {
+  if (!this.portfolio || !this.userId || !this.user) return;
+  
+  // Check if allocations sum to 100
+  const allocationSum = Object.values(this.allocations).reduce((sum, val) => sum + val, 0);
+  if (Math.abs(allocationSum - 100) > 1) { // Allow small rounding errors
+    this.toast({
+      title: "Error",
+      description: "Asset allocations must sum to 100%",
+      variant: "destructive"
+    });
+    return;
+  }
+  
+  this.setSaving(true);
+  try {
+    // Calculate asset values based on allocation percentages and total investment balance
+    const totalValue = this.user.investmentBalance || 0;
+    const assets = {};
+    
+    Object.entries(this.allocations).forEach(([asset, allocation]) => {
+      const value = (allocation / 100) * totalValue;
+      assets[asset] = {
+        allocation,
+        value
+      };
+    });
+    
+    const updatedPortfolio = {
+      ...this.portfolio,
+      assets,
+      totalValue,
+      lastUpdated: new Date().toISOString()
+    };
+    
+    await this.updateUserPortfolio(this.userId, updatedPortfolio);
+    this.setPortfolio(updatedPortfolio);
+    
+    this.toast({
+      title: "Success",
+      description: "Portfolio updated successfully",
+    });
+  } catch (error) {
+    this.toast({
+      title: "Error",
+      description: "Failed to update portfolio",
+      variant: "destructive"
+    });
+  } finally {
+    this.setSaving(false);
+  }
 };
 
 export default UserPortfolio;
