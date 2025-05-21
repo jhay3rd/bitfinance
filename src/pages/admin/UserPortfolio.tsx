@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress, Paper, Button, TextField, Slider, FormControl, InputLabel, Select, MenuItem, Grid } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -58,7 +57,7 @@ const UserPortfolio: React.FC = () => {
       setLoading(true);
       try {
         const response = await getUser(userId);
-        const userData: UserResponse = response.data;
+        const userData = response.data as UserResponse;
         
         if (userData.user) {
           setUser(userData.user);
@@ -69,7 +68,7 @@ const UserPortfolio: React.FC = () => {
             
             // Initialize allocations state
             const initialAllocations: Record<string, number> = {};
-            Object.entries(userData.portfolio.assets).forEach(([asset, data]: [string, any]) => {
+            Object.entries(userData.portfolio.assets).forEach(([asset, data]) => {
               initialAllocations[asset] = data.allocation;
             });
             setAllocations(initialAllocations);
